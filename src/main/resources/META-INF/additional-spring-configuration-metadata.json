@@ -1,0 +1,14 @@
+{
+	"properties": [
+		{
+			"name": "jwt.private.key",
+			"type": "java.lang.String",
+			"description": "The private key is used to digitally sign JWT tokens. It must be kept secret, as anyone with access to it can generate valid JWT tokens. It is essential for ensuring the integrity and authenticity of the data."
+		},
+		{
+			"name": "jwt.public.key",
+			"type": "java.lang.String",
+			"description": "The public key is used to verify the signature of JWT tokens. It can be shared freely, as it only serves to check if a token was signed with the corresponding private key, ensuring the authenticity of the token."
+		}
+	]
+}
