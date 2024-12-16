@@ -18,8 +18,10 @@ import com.luand.luand.entities.dto.fashionLine.FashionLineDetailsDTO;
 import com.luand.luand.entities.dto.fashionLine.UpdateFashionLineDTO;
 import com.luand.luand.services.FashionLineService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/fashion-line")
+@RequestMapping("/fashion-lines")
 public class FashionLineController {
 
     private final FashionLineService fashionLineService;
@@ -34,7 +36,7 @@ public class FashionLineController {
         return ResponseEntity.ok(new FashionLineDetailsDTO(fashionLine));
     }
 
-    @GetMapping("/{print}")
+    @GetMapping("/prints/{print}")
     public ResponseEntity<FashionLineDetailsDTO> getFashionLineByPrint(@PathVariable String print) {
         var fashionLine = fashionLineService.getFashionLineByPrint(print);
         return ResponseEntity.ok(new FashionLineDetailsDTO(fashionLine));
@@ -49,13 +51,14 @@ public class FashionLineController {
     }
 
     @PostMapping
-    public ResponseEntity<FashionLineDetailsDTO> createFashionLine(@RequestBody CreateFashionLineDTO data) {
+    public ResponseEntity<FashionLineDetailsDTO> createFashionLine(@RequestBody @Valid CreateFashionLineDTO data) {
         var fashionLine = fashionLineService.createFashionLine(data);
         return ResponseEntity.ok(new FashionLineDetailsDTO(fashionLine));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FashionLineDetailsDTO> updateFashionLine(@PathVariable Long id, UpdateFashionLineDTO data) {
+    public ResponseEntity<FashionLineDetailsDTO> updateFashionLine(@PathVariable Long id,
+            @RequestBody @Valid UpdateFashionLineDTO data) {
         var fashionLine = fashionLineService.updateFashionLine(id, data);
         return ResponseEntity.ok(new FashionLineDetailsDTO(fashionLine));
     }

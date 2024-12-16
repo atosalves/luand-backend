@@ -7,6 +7,7 @@ import com.luand.luand.entities.Size;
 import com.luand.luand.entities.dto.model.ModelDetailsDTO;
 
 public record FashionLineDetailsDTO(
+        Long id,
         String name,
         String print,
         ModelDetailsDTO modelDTO,
@@ -14,6 +15,7 @@ public record FashionLineDetailsDTO(
         Set<Size> sizes) {
     public FashionLineDetailsDTO(FashionLine fashionLine) {
         this(
+                fashionLine.getId(),
                 fashionLine.getName(),
                 fashionLine.getPrint(),
                 new ModelDetailsDTO(fashionLine.getModel()),

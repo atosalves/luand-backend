@@ -15,8 +15,10 @@ import com.luand.luand.entities.dto.user.UpdateUserDTO;
 import com.luand.luand.entities.dto.user.UserSummaryDTO;
 import com.luand.luand.services.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -31,26 +33,26 @@ public class UserController {
         return ResponseEntity.ok(new UserSummaryDTO(user));
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username/{username}")
     public ResponseEntity<UserSummaryDTO> getUserByUsername(@PathVariable String username) {
         var user = userService.getUserByUsername(username);
         return ResponseEntity.ok(new UserSummaryDTO(user));
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<UserSummaryDTO> getUserByEmail(@PathVariable String email) {
         var user = userService.getUserByEmail(email);
         return ResponseEntity.ok(new UserSummaryDTO(user));
     }
 
     @PostMapping
-    public ResponseEntity<UserSummaryDTO> createUser(@RequestBody CreateUserDTO data) {
+    public ResponseEntity<UserSummaryDTO> createUser(@RequestBody @Valid CreateUserDTO data) {
         var user = userService.createUser(data);
         return ResponseEntity.ok(new UserSummaryDTO(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserSummaryDTO> updateUser(@PathVariable Long id, UpdateUserDTO data) {
+    public ResponseEntity<UserSummaryDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDTO data) {
         var user = userService.updateUser(id, data);
         return ResponseEntity.ok(new UserSummaryDTO(user));
     }

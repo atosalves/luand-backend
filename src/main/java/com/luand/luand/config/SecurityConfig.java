@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -23,6 +24,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Value("${jwt.public.key}")
@@ -39,11 +41,10 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/model", "/model/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/item", "/item/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/fashion-line", "/fashion-line/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/users", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/fashion-lines", "/fashion-lines/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

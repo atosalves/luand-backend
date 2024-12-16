@@ -10,6 +10,8 @@ import com.luand.luand.entities.dto.user.TokenResponseDTO;
 import com.luand.luand.services.TokenService;
 import com.luand.luand.services.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class AuthController {
 
@@ -22,10 +24,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        var user = userService.getUserByUsername(loginDTO.username());
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginDTO data) {
+        var user = userService.getUserByUsername(data.username());
 
-        userService.validatePassword(loginDTO.password(), user.getPassword());
+        userService.validatePassword(data.password(), user.getPassword());
 
         var jwtValue = tokenService.generateToken(user.getId().toString());
         var expireTime = tokenService.getExpirationTime();

@@ -3,6 +3,7 @@ package com.luand.luand.services;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luand.luand.entities.User;
 import com.luand.luand.entities.dto.user.CreateUserDTO;
@@ -22,21 +23,25 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    @Transactional
     public User createUser(CreateUserDTO data) {
         verifyUserExists(data.email(), data.username());
 
@@ -46,6 +51,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User updateUser(Long id, UpdateUserDTO data) {
         var user = getUserById(id);
 
@@ -58,6 +64,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         getUserById(id);
         userRepository.deleteById(id);
@@ -70,6 +77,7 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     private void verifyUserExists(String email, String username) {
         var userByEmail = userRepository.findByEmail(email);
         if (userByEmail.isPresent()) {

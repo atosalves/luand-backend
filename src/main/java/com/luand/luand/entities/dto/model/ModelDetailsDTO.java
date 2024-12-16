@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 import com.luand.luand.entities.Model;
 
-public record ModelDetailsDTO(String name, String description, BigDecimal price) {
+public record ModelDetailsDTO(Long id, String name, String description, BigDecimal price) {
     public ModelDetailsDTO(Model model) {
-        this(model.getName(), model.getDescription(), model.getPrice());
+        this(model.getId(), model.getName(), model.getDescription(), model.getPrice());
     }
 }

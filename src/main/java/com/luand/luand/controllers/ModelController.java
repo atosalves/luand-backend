@@ -18,8 +18,10 @@ import com.luand.luand.entities.dto.model.ModelDetailsDTO;
 import com.luand.luand.entities.dto.model.UpdateModelDTO;
 import com.luand.luand.services.ModelService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/model")
+@RequestMapping("/models")
 public class ModelController {
 
     private final ModelService modelService;
@@ -34,7 +36,7 @@ public class ModelController {
         return ResponseEntity.ok(new ModelDetailsDTO(model));
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<ModelDetailsDTO> getModelById(@PathVariable String name) {
         var model = modelService.getModelByName(name);
         return ResponseEntity.ok(new ModelDetailsDTO(model));
@@ -48,13 +50,13 @@ public class ModelController {
     }
 
     @PostMapping
-    public ResponseEntity<ModelDetailsDTO> createModel(@RequestBody CreateModelDTO data) {
+    public ResponseEntity<ModelDetailsDTO> createModel(@RequestBody @Valid CreateModelDTO data) {
         var model = modelService.createModel(data);
         return ResponseEntity.ok(new ModelDetailsDTO(model));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ModelDetailsDTO> updateModel(@PathVariable Long id, UpdateModelDTO data) {
+    public ResponseEntity<ModelDetailsDTO> updateModel(@PathVariable Long id, @RequestBody @Valid UpdateModelDTO data) {
         var model = modelService.updateModel(id, data);
         return ResponseEntity.ok(new ModelDetailsDTO(model));
     }
