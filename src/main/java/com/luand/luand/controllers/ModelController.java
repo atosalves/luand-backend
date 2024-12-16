@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 import com.luand.luand.entities.dto.model.ModelDetailsDTO;
+import com.luand.luand.entities.dto.model.UpdateModelDTO;
 import com.luand.luand.services.ModelService;
 
 @RestController
@@ -26,26 +29,40 @@ public class ModelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ModelDetailsDTO> getModel(@PathVariable Long id) {
+    public ResponseEntity<ModelDetailsDTO> getModelById(@PathVariable Long id) {
         var model = modelService.getModelById(id);
-        var result = new ModelDetailsDTO(model);
+        return ResponseEntity.ok(new ModelDetailsDTO(model));
+    }
 
-        return ResponseEntity.ok().body(result);
+    @GetMapping("/{name}")
+    public ResponseEntity<ModelDetailsDTO> getModelById(@PathVariable String name) {
+        var model = modelService.getModelByName(name);
+        return ResponseEntity.ok(new ModelDetailsDTO(model));
     }
 
     @GetMapping
     public ResponseEntity<List<ModelDetailsDTO>> getAllModels() {
         var result = modelService.getAllModels().stream().map(model -> new ModelDetailsDTO(model))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
-    public ResponseEntity<ModelDetailsDTO> createModel(@RequestBody CreateModelDTO modelDTO) {
-        var model = modelService.createModel(modelDTO);
-        var result = new ModelDetailsDTO(model);
+    public ResponseEntity<ModelDetailsDTO> createModel(@RequestBody CreateModelDTO data) {
+        var model = modelService.createModel(data);
+        return ResponseEntity.ok(new ModelDetailsDTO(model));
+    }
 
-        return ResponseEntity.ok().body(result);
+    @PutMapping("/{id}")
+    public ResponseEntity<ModelDetailsDTO> updateModel(@PathVariable Long id, UpdateModelDTO data) {
+        var model = modelService.updateModel(id, data);
+        return ResponseEntity.ok(new ModelDetailsDTO(model));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteModel(@PathVariable Long id) {
+        modelService.deleteModel(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

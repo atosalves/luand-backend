@@ -32,4 +32,5 @@ public class AuthController {
 
         return ResponseEntity.ok(new TokenResponseDTO(jwtValue, expireTime));
     }
+
 }
