@@ -41,7 +41,7 @@ public class FashionLineController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FashionLineDetailsDTO>> getAllItens() {
+    public ResponseEntity<List<FashionLineDetailsDTO>> getAllFashionLines() {
         var result = fashionLineService.getAllFashionLines().stream().map(item -> new FashionLineDetailsDTO(item))
                 .collect(Collectors.toList());
 
