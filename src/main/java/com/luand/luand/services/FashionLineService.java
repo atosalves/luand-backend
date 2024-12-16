@@ -12,8 +12,8 @@ import com.luand.luand.repositories.FashionLineRepository;
 @Service
 public class FashionLineService {
 
-    private FashionLineRepository fashionLineRepository;
-    private ModelService modelService;
+    private final FashionLineRepository fashionLineRepository;
+    private final ModelService modelService;
 
     public FashionLineService(FashionLineRepository fashionLineRepository, ModelService modelService) {
         this.fashionLineRepository = fashionLineRepository;

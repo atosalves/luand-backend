@@ -19,7 +19,7 @@ import com.luand.luand.services.ItemService;
 @RequestMapping("/item")
 public class ItemController {
 
-    private ItemService itemService;
+    private final ItemService itemService;
 
     public ItemController(ItemService itemService) {
         this.itemService = itemService;

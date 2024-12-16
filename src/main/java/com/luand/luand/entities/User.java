@@ -1,5 +1,7 @@
 package com.luand.luand.entities;
 
+import java.io.Serializable;
+
 import com.luand.luand.entities.dto.user.CreateUserDTO;
 
 import jakarta.persistence.Column;
@@ -15,7 +17,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "TB_USER")
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

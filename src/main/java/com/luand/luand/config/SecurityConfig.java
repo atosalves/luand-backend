@@ -23,7 +23,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
 @Configuration
-public class LuandSecurityConfig {
+public class SecurityConfig {
 
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;

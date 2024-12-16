@@ -19,7 +19,7 @@ import com.luand.luand.services.ModelService;
 @RequestMapping("/model")
 public class ModelController {
 
-    private ModelService modelService;
+    private final ModelService modelService;
 
     public ModelController(ModelService modelService) {
         this.modelService = modelService;

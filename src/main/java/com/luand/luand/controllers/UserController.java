@@ -11,7 +11,8 @@ import com.luand.luand.services.UserService;
 
 @RestController
 public class UserController {
-    private UserService userService;
+
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;

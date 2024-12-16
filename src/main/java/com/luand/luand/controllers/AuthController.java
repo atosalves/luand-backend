@@ -14,8 +14,8 @@ import com.luand.luand.services.UserService;
 @RestController
 public class AuthController {
 
-    private UserService userService;
-    private TokenService tokenService;
+    private final UserService userService;
+    private final TokenService tokenService;
 
     public AuthController(UserService userService, TokenService tokenService) {
         this.userService = userService;

@@ -11,8 +11,8 @@ import com.luand.luand.repositories.ItemRepository;
 @Service
 public class ItemService {
 
-    private ItemRepository itemRepository;
-    private FashionLineService fashionLineService;
+    private final ItemRepository itemRepository;
+    private final FashionLineService fashionLineService;
 
     public ItemService(ItemRepository itemRepository, FashionLineService fashionLineService) {
         this.itemRepository = itemRepository;
@@ -31,7 +31,6 @@ public class ItemService {
 
     public Item createItem(CreateItemDTO itemDTO) {
         var fashionLine = fashionLineService.getFashionLine(itemDTO.fashionLineId());
-
         var item = new Item(itemDTO, fashionLine);
 
         fashionLineService.updateDistincts(fashionLine, item.getColor(), item.getSize());

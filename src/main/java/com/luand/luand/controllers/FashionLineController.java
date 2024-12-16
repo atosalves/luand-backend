@@ -18,7 +18,8 @@ import com.luand.luand.services.FashionLineService;
 @RestController
 @RequestMapping("/fashion-line")
 public class FashionLineController {
-    private FashionLineService fashionLineService;
+
+    private final FashionLineService fashionLineService;
 
     public FashionLineController(FashionLineService fashionLineService) {
         this.fashionLineService = fashionLineService;
