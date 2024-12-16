@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.luand.luand.entities.dto.fashionLine.CreateFashionLineDTO;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +30,8 @@ public class FashionLine implements Serializable {
     private Long id;
 
     private String name;
+
+    @Column(unique = true)
     private String print;
 
     @ManyToOne

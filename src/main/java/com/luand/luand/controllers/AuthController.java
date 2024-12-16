@@ -1,6 +1,5 @@
 package com.luand.luand.controllers;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,18 +23,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        var opUser = userService.getUserByUsername(loginDTO.username());
+        var user = userService.getUserByUsername(loginDTO.username());
 
-        if (opUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        userService.validatePassword(loginDTO.password(), user.getPassword());
 
-        var user = opUser.get();
-        if (!userService.verifyPassword(loginDTO.password(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        var jwtValue = tokenService.generateToken(user);
+        var jwtValue = tokenService.generateToken(user.getId().toString());
         var expireTime = tokenService.getExpirationTime();
 
         return ResponseEntity.ok(new TokenResponseDTO(jwtValue, expireTime));

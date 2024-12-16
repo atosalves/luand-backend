@@ -27,7 +27,7 @@ public class FashionLineController {
 
     @GetMapping("/{id}")
     public ResponseEntity<FashionLineDetailsDTO> getFashionLine(@PathVariable Long id) {
-        var fashionLine = fashionLineService.getFashionLine(id);
+        var fashionLine = fashionLineService.getFashionLineById(id);
         var result = new FashionLineDetailsDTO(fashionLine);
 
         return ResponseEntity.ok().body(result);

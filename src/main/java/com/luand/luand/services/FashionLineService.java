@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import com.luand.luand.entities.FashionLine;
 import com.luand.luand.entities.Size;
 import com.luand.luand.entities.dto.fashionLine.CreateFashionLineDTO;
+import com.luand.luand.entities.dto.fashionLine.UpdateFashionLineDTO;
+import com.luand.luand.exception.fashionLine.FashionLineNotFoundException;
+import com.luand.luand.exception.fashionLine.FashionLineAlreadyExistsException;
 import com.luand.luand.repositories.FashionLineRepository;
 
 @Service
@@ -20,9 +23,14 @@ public class FashionLineService {
         this.modelService = modelService;
     }
 
-    public FashionLine getFashionLine(Long id) {
-        var fashionLine = fashionLineRepository.findById(id);
-        return fashionLine.get();
+    public FashionLine getFashionLineById(Long id) {
+        return fashionLineRepository.findById(id)
+                .orElseThrow(() -> new FashionLineNotFoundException("Fashion Line not found"));
+    }
+
+    public FashionLine getFashionLineByPrint(String print) {
+        return fashionLineRepository.findByPrint(print)
+                .orElseThrow(() -> new FashionLineNotFoundException("Fashion Line not found"));
     }
 
     public List<FashionLine> getAllFashionLines() {
@@ -30,12 +38,32 @@ public class FashionLineService {
         return result;
     }
 
-    public FashionLine createFashionLine(CreateFashionLineDTO fashionLineDTO) {
-        var model = modelService.getModel(fashionLineDTO.modelId());
+    public FashionLine createFashionLine(CreateFashionLineDTO data) {
+        verifyFashionLinexists(data.print());
 
-        var fashionLine = new FashionLine(fashionLineDTO, model);
+        var model = modelService.getModelById(data.modelId());
+        var fashionLine = new FashionLine(data, model);
 
         return fashionLineRepository.save(fashionLine);
+    }
+
+    public FashionLine updateFashionLine(Long id, UpdateFashionLineDTO data) {
+        var fashionLine = getFashionLineById(id);
+
+        verifyFashionLinexists(data.print());
+
+        fashionLine.setName(data.name());
+        fashionLine.setPrint(data.print());
+
+        var model = modelService.getModelById(data.modelId());
+        fashionLine.setModel(model);
+
+        return fashionLineRepository.save(fashionLine);
+    }
+
+    public void deleteFashionLine(Long id) {
+        getFashionLineById(id);
+        fashionLineRepository.deleteById(id);
     }
 
     protected void updateDistincts(FashionLine fashionLine, String color, Size size) {
@@ -43,6 +71,13 @@ public class FashionLineService {
         fashionLine.getSizesDistinct().add(size);
 
         fashionLineRepository.save(fashionLine);
+    }
+
+    private void verifyFashionLinexists(String print) {
+        var fashionLineByColor = fashionLineRepository.findByPrint(print);
+        if (fashionLineByColor.isPresent()) {
+            throw new FashionLineAlreadyExistsException("Print is already in use");
+        }
     }
 
 }

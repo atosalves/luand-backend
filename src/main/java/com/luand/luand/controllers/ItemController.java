@@ -27,7 +27,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDetailsDTO> getItem(@PathVariable Long id) {
-        var item = itemService.getItem(id);
+        var item = itemService.getItemById(id);
         var result = new ItemDetailsDTO(item);
 
         return ResponseEntity.ok().body(result);

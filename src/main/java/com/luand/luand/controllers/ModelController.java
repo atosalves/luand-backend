@@ -27,7 +27,7 @@ public class ModelController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ModelDetailsDTO> getModel(@PathVariable Long id) {
-        var model = modelService.getModel(id);
+        var model = modelService.getModelById(id);
         var result = new ModelDetailsDTO(model);
 
         return ResponseEntity.ok().body(result);

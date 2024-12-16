@@ -7,8 +7,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import com.luand.luand.entities.User;
-
 @Service
 public class TokenService {
 
@@ -19,8 +17,8 @@ public class TokenService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(User user) {
-        var claims = generateClaims(user.getId().toString());
+    public String generateToken(String userIdentifty) {
+        var claims = generateClaims(userIdentifty);
         return jwtEncoder
                 .encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();
