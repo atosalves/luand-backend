@@ -42,6 +42,10 @@ public class SecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(HttpMethod.POST, "/login", "/users", "/error").permitAll()
+                        // disable later
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",
+                                "/swagger-resources/**", "/webjars/**")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/fashion-lines", "/fashion-lines/**").permitAll()

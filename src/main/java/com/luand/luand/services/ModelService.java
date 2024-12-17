@@ -70,7 +70,7 @@ public class ModelService {
     private void verifyModelExists(String name) {
         var modelByName = modelRepository.findByName(name);
         if (modelByName.isPresent()) {
-            throw new ModelAlreadyExistsException("Model is already in use");
+            throw new ModelAlreadyExistsException("Name is already in use");
         }
     }
 
