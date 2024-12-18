@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.luand.luand.entities.dto.user.LoginDTO;
 import com.luand.luand.entities.dto.user.TokenResponseDTO;
-import com.luand.luand.services.TokenService;
-import com.luand.luand.services.UserService;
+import com.luand.luand.services.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,12 +19,10 @@ import jakarta.validation.Valid;
 @RestController
 public class AuthController {
 
-    private final UserService userService;
-    private final TokenService tokenService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService, TokenService tokenService) {
-        this.userService = userService;
-        this.tokenService = tokenService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @Operation(summary = "User login", description = "Authenticate a user with their username and password, returning a JWT token for further requests.")
@@ -36,14 +33,8 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginDTO data) {
-        var user = userService.getUserByUsername(data.username());
-
-        userService.validatePassword(data.password(), user.getPassword());
-
-        var jwtValue = tokenService.generateToken(user.getId().toString());
-        var expireTime = tokenService.getExpirationTime();
-
-        return ResponseEntity.ok(new TokenResponseDTO(jwtValue, expireTime));
+        var jwtValue = authService.authenticate(data);
+        return ResponseEntity.ok(new TokenResponseDTO(jwtValue));
     }
 
 }

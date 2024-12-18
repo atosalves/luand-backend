@@ -7,25 +7,33 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import com.luand.luand.entities.dto.user.LoginDTO;
+
 @Service
-public class TokenService {
+public class AuthService {
 
+    private final UserService userService;
     private final JwtEncoder jwtEncoder;
-    private static final long EXPIRATION_TIME_IN_SECONDS = 3600L;
+    private final long expirationTime = 3600L; // 1 hour
 
-    public TokenService(JwtEncoder jwtEncoder) {
+    public AuthService(UserService userService, JwtEncoder jwtEncoder) {
+        this.userService = userService;
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(String userIdentifty) {
+    public String authenticate(LoginDTO data) {
+        var user = userService.getUserByUsername(data.username());
+        userService.validatePassword(data.password(), user.getPassword());
+        var jwtValue = generateToken(user.getId().toString());
+
+        return jwtValue;
+    }
+
+    private String generateToken(String userIdentifty) {
         var claims = generateClaims(userIdentifty);
         return jwtEncoder
                 .encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();
-    }
-
-    public Long getExpirationTime() {
-        return EXPIRATION_TIME_IN_SECONDS;
     }
 
     private JwtClaimsSet generateClaims(String userIdentifty) {
@@ -35,7 +43,7 @@ public class TokenService {
                 .issuer("luand-backend")
                 .subject(userIdentifty)
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(EXPIRATION_TIME_IN_SECONDS))
+                .expiresAt(now.plusSeconds(expirationTime))
                 .claim("loggedIn", true)
                 .build();
 
