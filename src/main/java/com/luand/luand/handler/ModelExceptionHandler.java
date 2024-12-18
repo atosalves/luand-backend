@@ -2,14 +2,14 @@ package com.luand.luand.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.luand.luand.controllers.ModelController;
 import com.luand.luand.exception.model.ModelAlreadyExistsException;
 import com.luand.luand.exception.model.ModelNotFoundException;
 
-@ControllerAdvice(assignableTypes = ModelController.class)
+@RestControllerAdvice(assignableTypes = ModelController.class)
 public class ModelExceptionHandler {
 
     @ExceptionHandler(ModelNotFoundException.class)

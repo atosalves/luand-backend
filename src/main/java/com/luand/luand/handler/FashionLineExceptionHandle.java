@@ -2,14 +2,14 @@ package com.luand.luand.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.luand.luand.controllers.FashionLineController;
 import com.luand.luand.exception.fashionLine.FashionLineAlreadyExistsException;
 import com.luand.luand.exception.fashionLine.FashionLineNotFoundException;
 
-@ControllerAdvice(assignableTypes = FashionLineController.class)
+@RestControllerAdvice(assignableTypes = FashionLineController.class)
 public class FashionLineExceptionHandle {
 
     @ExceptionHandler(FashionLineNotFoundException.class)
