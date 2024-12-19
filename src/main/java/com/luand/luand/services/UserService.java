@@ -1,6 +1,5 @@
 package com.luand.luand.services;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,11 +67,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void validatePassword(String rawPassword, String encodedPassword) {
-        var isValid = passwordEncoder.matches(rawPassword, encodedPassword);
-        if (!isValid) {
-            throw new BadCredentialsException("Invalid password");
-        }
+    public boolean validatePassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
     @Transactional(readOnly = true)
