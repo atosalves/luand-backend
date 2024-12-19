@@ -2,6 +2,7 @@ package com.luand.luand.services;
 
 import java.time.Instant;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -20,10 +21,13 @@ public class AuthService {
 
     public String authenticate(LoginDTO data) {
         var user = userService.getUserByUsername(data.username());
-        userService.validatePassword(data.password(), user.getPassword());
-        var jwtValue = generateToken(user.getId().toString());
 
-        return jwtValue;
+        var isValid = userService.validatePassword(data.password(), user.getPassword());
+        if (!isValid) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        return generateToken(user.getId().toString());
     }
 
     private String generateToken(String userIdentifty) {
