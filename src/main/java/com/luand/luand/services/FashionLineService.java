@@ -13,16 +13,14 @@ import com.luand.luand.exception.fashionLine.FashionLineNotFoundException;
 import com.luand.luand.exception.fashionLine.FashionLineAlreadyExistsException;
 import com.luand.luand.repositories.FashionLineRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class FashionLineService {
 
     private final FashionLineRepository fashionLineRepository;
     private final ModelService modelService;
-
-    public FashionLineService(FashionLineRepository fashionLineRepository, ModelService modelService) {
-        this.fashionLineRepository = fashionLineRepository;
-        this.modelService = modelService;
-    }
 
     @Transactional(readOnly = true)
     public FashionLine getFashionLineById(Long id) {

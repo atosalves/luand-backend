@@ -12,16 +12,14 @@ import com.luand.luand.exception.user.UserAlreadyExistsException;
 import com.luand.luand.exception.user.UserNotFoundException;
 import com.luand.luand.repositories.UserRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional(readOnly = true)
     public User getUserById(Long id) {

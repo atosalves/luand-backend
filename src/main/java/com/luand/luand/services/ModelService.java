@@ -12,14 +12,13 @@ import com.luand.luand.exception.model.ModelAlreadyExistsException;
 import com.luand.luand.exception.model.ModelNotFoundException;
 import com.luand.luand.repositories.ModelRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ModelService {
 
     private final ModelRepository modelRepository;
-
-    public ModelService(ModelRepository modelRepository) {
-        this.modelRepository = modelRepository;
-    }
 
     @Transactional(readOnly = true)
     public Model getModelById(Long id) {

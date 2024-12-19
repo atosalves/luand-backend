@@ -12,16 +12,14 @@ import com.luand.luand.entities.dto.item.UpdateItemDTO;
 import com.luand.luand.exception.item.ItemNotFoundException;
 import com.luand.luand.repositories.ItemRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ItemService {
 
     private final ItemRepository itemRepository;
     private final FashionLineService fashionLineService;
-
-    public ItemService(ItemRepository itemRepository, FashionLineService fashionLineService) {
-        this.itemRepository = itemRepository;
-        this.fashionLineService = fashionLineService;
-    }
 
     @Transactional(readOnly = true)
     public Item getItemById(Long id) {

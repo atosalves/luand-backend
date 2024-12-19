@@ -25,16 +25,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/fashion-lines")
+@AllArgsConstructor
 public class FashionLineController {
 
     private final FashionLineService fashionLineService;
-
-    public FashionLineController(FashionLineService fashionLineService) {
-        this.fashionLineService = fashionLineService;
-    }
 
     @Operation(summary = "Retrieve a fashion line by ID", description = "Fetch details of a specific fashion line using its unique identifier.")
     @ApiResponses(value = {

@@ -9,17 +9,14 @@ import org.springframework.stereotype.Service;
 
 import com.luand.luand.entities.dto.user.LoginDTO;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class AuthService {
 
     private final UserService userService;
     private final JwtEncoder jwtEncoder;
-    private final long expirationTime = 3600L; // 1 hour
-
-    public AuthService(UserService userService, JwtEncoder jwtEncoder) {
-        this.userService = userService;
-        this.jwtEncoder = jwtEncoder;
-    }
 
     public String authenticate(LoginDTO data) {
         var user = userService.getUserByUsername(data.username());
@@ -38,6 +35,7 @@ public class AuthService {
 
     private JwtClaimsSet generateClaims(String userIdentifty) {
         var now = Instant.now();
+        var expirationTime = 3600L;
 
         var claims = JwtClaimsSet.builder()
                 .issuer("luand-backend")

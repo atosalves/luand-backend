@@ -25,16 +25,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/models")
+@AllArgsConstructor
 public class ModelController {
 
     private final ModelService modelService;
-
-    public ModelController(ModelService modelService) {
-        this.modelService = modelService;
-    }
 
     @Operation(summary = "Retrieve a model by ID", description = "Fetch the details of a specific model using its unique identifier.")
     @ApiResponses(value = {
