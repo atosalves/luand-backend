@@ -42,6 +42,9 @@ public class FashionLine implements Serializable {
     @ElementCollection
     private Set<Size> sizesDistinct;
 
+    @ManyToOne
+    private Store store;
+
     @OneToMany(mappedBy = "fashionLine")
     private Set<Item> itens;
 
