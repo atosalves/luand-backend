@@ -45,8 +45,6 @@ public class ItemService {
         var fashionLine = fashionLineService.getFashionLineById(data.fashionLineId());
         var item = new Item(data, fashionLine);
 
-        fashionLineService.addDistincts(fashionLine, item.getColor(), item.getSize());
-
         return itemRepository.save(item);
     }
 
@@ -55,11 +53,6 @@ public class ItemService {
         var item = getItemById(id);
 
         item.setAvailableQuantity(data.quantity());
-
-        if (data.quantity() == 0) {
-            var fashionLine = fashionLineService.getFashionLineById(item.getFashionLine().getId());
-            fashionLineService.removeDistincts(fashionLine, item.getColor(), item.getSize());
-        }
 
         return itemRepository.save(item);
     }
@@ -74,18 +67,12 @@ public class ItemService {
 
         var fashionLine = fashionLineService.getFashionLineById(data.fashionLineDTO());
         item.setFashionLine(fashionLine);
-        fashionLineService.addDistincts(fashionLine, item.getColor(), item.getSize());
 
         return itemRepository.save(item);
     }
 
     @Transactional
     public void deleteItem(Long id) {
-        var item = getItemById(id);
-
-        var fashionLine = fashionLineService.getFashionLineById(item.getFashionLine().getId());
-        fashionLineService.removeDistincts(fashionLine, item.getColor(), item.getSize());
-
         itemRepository.deleteById(id);
     }
 

@@ -64,7 +64,6 @@ public class StoreService {
         storeRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     private void verifyStoreExists(String name) {
         var storeByName = storeRepository.findByName(name);
         if (storeByName.isPresent()) {

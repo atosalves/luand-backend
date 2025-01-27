@@ -65,7 +65,6 @@ public class ModelService {
         modelRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     private void verifyModelExists(String name) {
         var modelByName = modelRepository.findByName(name);
         if (modelByName.isPresent()) {

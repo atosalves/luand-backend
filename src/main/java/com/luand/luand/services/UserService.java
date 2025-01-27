@@ -71,7 +71,6 @@ public class UserService {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    @Transactional(readOnly = true)
     private void verifyUserExists(String email, String username) {
         var userByEmail = userRepository.findByEmail(email);
         if (userByEmail.isPresent()) {

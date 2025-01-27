@@ -6,7 +6,6 @@ import java.util.Set;
 import com.luand.luand.entities.dto.fashionLine.CreateFashionLineDTO;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,11 +35,6 @@ public class FashionLine implements Serializable {
 
     @ManyToOne
     private Model model;
-
-    @ElementCollection
-    private Set<String> colorsDistinct;
-    @ElementCollection
-    private Set<Size> sizesDistinct;
 
     @ManyToOne
     private Store store;

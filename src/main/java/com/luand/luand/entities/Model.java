@@ -3,6 +3,7 @@ package com.luand.luand.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 
@@ -33,6 +34,8 @@ public class Model implements Serializable {
 
     private String description;
     private BigDecimal price;
+
+    private Set<Size> suportedSizes;
 
     @OneToMany(mappedBy = "model")
     private List<FashionLine> fashionLines;

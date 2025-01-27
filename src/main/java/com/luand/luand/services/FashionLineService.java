@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.luand.luand.entities.FashionLine;
-import com.luand.luand.entities.Size;
 import com.luand.luand.entities.dto.fashionLine.CreateFashionLineDTO;
 import com.luand.luand.entities.dto.fashionLine.UpdateFashionLineDTO;
 import com.luand.luand.exception.fashionLine.FashionLineNotFoundException;
@@ -42,7 +41,7 @@ public class FashionLineService {
 
     @Transactional
     public FashionLine createFashionLine(CreateFashionLineDTO data) {
-        verifyFashionLinexists(data.print());
+        verifyFashionLineExists(data.print());
 
         var model = modelService.getModelById(data.modelId());
         var fashionLine = new FashionLine(data, model);
@@ -54,7 +53,7 @@ public class FashionLineService {
     public FashionLine updateFashionLine(Long id, UpdateFashionLineDTO data) {
         var fashionLine = getFashionLineById(id);
 
-        verifyFashionLinexists(data.print());
+        verifyFashionLineExists(data.print());
 
         fashionLine.setName(data.name());
         fashionLine.setPrint(data.print());
@@ -71,24 +70,7 @@ public class FashionLineService {
         fashionLineRepository.deleteById(id);
     }
 
-    @Transactional
-    protected void addDistincts(FashionLine fashionLine, String color, Size size) {
-        fashionLine.getColorsDistinct().add(color);
-        fashionLine.getSizesDistinct().add(size);
-
-        fashionLineRepository.save(fashionLine);
-    }
-
-    @Transactional
-    protected void removeDistincts(FashionLine fashionLine, String color, Size size) {
-        fashionLine.getColorsDistinct().remove(color);
-        fashionLine.getSizesDistinct().remove(size);
-
-        fashionLineRepository.save(fashionLine);
-    }
-
-    @Transactional(readOnly = true)
-    private void verifyFashionLinexists(String print) {
+    private void verifyFashionLineExists(String print) {
         var fashionLineByColor = fashionLineRepository.findByPrint(print);
         if (fashionLineByColor.isPresent()) {
             throw new FashionLineAlreadyExistsException("Print is already in use");
