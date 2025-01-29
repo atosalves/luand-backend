@@ -30,6 +30,9 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
     @Value("${jwt.private.key}")
@@ -42,21 +45,34 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        // dev or prod swagger permissions
+        httpSecurity.authorizeHttpRequests(configurer -> {
+            var swaggerRoutes = configurer.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
+                    "/webjars/**");
+            if (activeProfile.equals("dev")) {
+                swaggerRoutes.permitAll();
+            }
+            if (activeProfile.equals("prod")) {
+                swaggerRoutes.denyAll();
+            }
+        });
+
+        httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers(HttpMethod.POST, "/login", "/users", "/error").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",
-                                "/swagger-resources/**", "/webjars/**")
-                        .permitAll() // disable later
+
                         .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/fashion-lines", "/fashion-lines/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated());
+
+        httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .build();
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        return httpSecurity.build();
     }
 
     @Bean
