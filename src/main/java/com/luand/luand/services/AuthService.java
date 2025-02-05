@@ -20,7 +20,7 @@ public class AuthService {
     private final JwtEncoder jwtEncoder;
 
     public String authenticate(LoginDTO data) {
-        var user = userService.getUserByUsername(data.username());
+        var user = userService.getUserByEmail(data.email());
 
         var isValid = userService.validatePassword(data.password(), user.getPassword());
         if (!isValid) {

@@ -10,7 +10,7 @@ import com.luand.luand.exception.fashionLine.FashionLineAlreadyExistsException;
 import com.luand.luand.exception.fashionLine.FashionLineNotFoundException;
 
 @RestControllerAdvice(assignableTypes = FashionLineController.class)
-public class FashionLineExceptionHandle {
+public class FashionLineExceptionHandler {
 
     @ExceptionHandler(FashionLineNotFoundException.class)
     public ResponseEntity<String> handleFashionLineNotFound(FashionLineNotFoundException exception) {

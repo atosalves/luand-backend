@@ -26,8 +26,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String username;
+    private String name;
     private String password;
 
     @Column(unique = true)
@@ -36,10 +35,13 @@ public class User implements Serializable {
     @ManyToOne
     private Store store;
 
+    private boolean isActive;
+
     public User(CreateUserDTO userDTO) {
-        this.username = userDTO.username();
+        this.name = userDTO.name();
         this.password = userDTO.password();
         this.email = userDTO.email();
+        this.isActive = true;
     }
 
 }

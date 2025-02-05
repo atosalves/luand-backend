@@ -27,12 +27,6 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
-
-    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -40,7 +34,10 @@ public class UserService {
 
     @Transactional
     public User createUser(CreateUserDTO data) {
-        verifyUserExists(data.email(), data.username());
+        var userByEmail = userRepository.findByEmail(data.email());
+        if (userByEmail.isPresent()) {
+            throw new UserAlreadyExistsException("Email is already in use");
+        }
 
         var user = new User(data);
         user.setPassword(passwordEncoder.encode(data.password()));
@@ -52,10 +49,8 @@ public class UserService {
     public User updateUser(Long id, UpdateUserDTO data) {
         var user = getUserById(id);
 
-        verifyUserExists(data.email(), data.username());
-
         user.setEmail(data.email());
-        user.setUsername(data.username());
+        user.setName(data.name());
         user.setPassword(passwordEncoder.encode(data.password()));
 
         return userRepository.save(user);
@@ -69,18 +64,6 @@ public class UserService {
 
     public boolean validatePassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
-    }
-
-    private void verifyUserExists(String email, String username) {
-        var userByEmail = userRepository.findByEmail(email);
-        if (userByEmail.isPresent()) {
-            throw new UserAlreadyExistsException("Email is already in use");
-        }
-
-        var userByUsername = userRepository.findByUsername(username);
-        if (userByUsername.isPresent()) {
-            throw new UserAlreadyExistsException("Username is already in use");
-        }
     }
 
 }

@@ -10,7 +10,7 @@ import com.luand.luand.exception.item.ItemAlreadyExistsException;
 import com.luand.luand.exception.item.ItemNotFoundException;
 
 @RestControllerAdvice(assignableTypes = ItemController.class)
-public class ItemExceptionHandle {
+public class ItemExceptionHandler {
 
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<String> handleItemNotFound(ItemNotFoundException exception) {
