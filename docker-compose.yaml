@@ -1,0 +1,15 @@
+services:
+    api:
+        image: luand
+        ports:
+            - "8080:8080"
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+        depends_on:
+            - db
+    db:
+        image: postgres:17
+        environment:
+            POSTGRES_DB: luand
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: admin
