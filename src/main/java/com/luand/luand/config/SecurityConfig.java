@@ -39,12 +39,14 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/model", "/model/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/item", "/item/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/fashion-line", "/fashion-line/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/login", "/users", "/stores", "/error").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/fashion-lines", "/fashion-lines/**").permitAll()
+                        .anyRequest().authenticated());
+
+        httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -14,12 +14,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "TB_FASHION_LINE")
+@Table(name = "tb_fashion_line")
 public class FashionLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,6 +41,7 @@ public class FashionLine implements Serializable {
     private Set<Size> sizesDistinct;
 
     @OneToMany(mappedBy = "fashionLine")
+    @EqualsAndHashCode.Exclude
     private Set<Item> itens;
 
     public FashionLine(CreateFashionLineDTO fashionLineDTO, Model model) {

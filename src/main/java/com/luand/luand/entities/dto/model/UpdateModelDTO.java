@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record CreateModelDTO(
+public record UpdateModelDTO(
                 @NotBlank(message = "Name is required") @Size(min = 3, max = 72, message = "Name must be between 3 and 72 characters") String name,
                 @NotBlank(message = "Username is required") @Size(min = 3, max = 255, message = "Description must be between 3 and 255 characters") String description,
                 @Positive(message = "Price must be greater than zero") @NotNull(message = "Price is required") BigDecimal price,

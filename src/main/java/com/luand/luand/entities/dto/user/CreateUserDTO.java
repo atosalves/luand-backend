@@ -1,5 +1,14 @@
 package com.luand.luand.entities.dto.user;
 
-public record CreateUserDTO(String username, String password, String email) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record CreateUserDTO(
+                @NotBlank(message = "Name is required") @Size(min = 2, max = 30, message = "Name must be between 2 and 30 characters") String name,
+                @Email(message = "Invalid email") @NotBlank(message = "Email is required") String email,
+                @NotBlank(message = "Password is required") @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters") String password,
+                @NotNull(message = "Store is required") Long storeId) {
 
 }
