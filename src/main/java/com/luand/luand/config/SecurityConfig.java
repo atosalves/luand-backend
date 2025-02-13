@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -16,6 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -23,7 +27,11 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
@@ -37,9 +45,25 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        // dev or prod swagger permissions
+        httpSecurity.authorizeHttpRequests(configurer -> {
+            var swaggerRoutes = configurer.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
+                    "/webjars/**");
+            if (activeProfile.equals("dev")) {
+                swaggerRoutes.permitAll();
+            }
+            if (activeProfile.equals("prod")) {
+                swaggerRoutes.denyAll();
+            }
+        });
+
+        httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
+<<<<<<< HEAD
                         .requestMatchers(HttpMethod.POST, "/login", "/users", "/stores", "/error").permitAll()
+=======
+                        .requestMatchers(HttpMethod.POST, "/login", "/users", "/error").permitAll()
+>>>>>>> develop
 
                         .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
@@ -50,7 +74,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        return httpSecurity.build();
     }
 
     @Bean
@@ -63,6 +89,18 @@ public class SecurityConfig {
         JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://localhost:3000"); // modify this for production
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
 }

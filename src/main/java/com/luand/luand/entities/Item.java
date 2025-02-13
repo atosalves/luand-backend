@@ -31,6 +31,7 @@ public class Item implements Serializable {
     private Size size;
 
     private String color;
+
     private int availableQuantity;
 
     @ManyToOne

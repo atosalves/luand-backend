@@ -1,6 +1,14 @@
 package com.luand.luand.entities;
 
+<<<<<<< HEAD
 import com.luand.luand.converter.SizeSetConverter;
+=======
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+>>>>>>> develop
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 import java.math.BigDecimal;
 <<<<<<< Updated upstream
