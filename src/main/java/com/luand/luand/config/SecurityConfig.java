@@ -35,30 +35,38 @@ public class SecurityConfig {
 
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
+
     @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
+
+    private static final String[] SWAGGER_ENDPOINTS = {
+            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
+            "/webjars/**"
+    };
+    private static final String[] PUBLIC_GET_ENDPOINTS = {
+            "/fashion-lines", "/fashion-lines/**"
+    };
+    private static final String[] PUBLIC_POST_ENDPOINTS = {
+            "/login"
+    };
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // dev or prod swagger permissions
         httpSecurity.authorizeHttpRequests(configurer -> {
-            var swaggerRoutes = configurer.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
-                    "/webjars/**");
+            var swaggerRequestMatchers = configurer.requestMatchers(SWAGGER_ENDPOINTS);
             if (activeProfile.equals("dev")) {
-                swaggerRoutes.permitAll();
+                swaggerRequestMatchers.permitAll();
             }
             if (activeProfile.equals("prod")) {
-                swaggerRoutes.denyAll();
+                swaggerRequestMatchers.denyAll();
             }
         });
 
         httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
-                        .requestMatchers(HttpMethod.POST, "/login", "/users", "/stores", "/error").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/fashion-lines", "/fashion-lines/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .anyRequest().authenticated());
 
         httpSecurity
