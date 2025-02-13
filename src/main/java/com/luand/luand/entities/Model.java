@@ -3,8 +3,7 @@ package com.luand.luand.entities;
 import com.luand.luand.converter.SizeSetConverter;
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 import java.math.BigDecimal;
-import java.util.List;
-
+import java.util.Set;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
