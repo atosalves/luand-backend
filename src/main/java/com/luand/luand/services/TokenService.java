@@ -22,8 +22,8 @@ public class TokenService {
         private final JwtEncoder jwtEncoder;
         private final JwtDecoder jwtDecoder;
 
-        private int MINUTES_EXPIRATION_ACCESS_TOKEN = 20;
-        private int DAYS_EXPIRATION_REFRESH_TOKEN = 7;
+        private static final int MINUTES_EXPIRATION_ACCESS_TOKEN = 20;
+        private static final int DAYS_EXPIRATION_REFRESH_TOKEN = 7;
         private static final ZoneId ZONE_ID = ZoneId.of("America/Recife");
 
         public TokenDTO getTokens(String userIdentifty) {
