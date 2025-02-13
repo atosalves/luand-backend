@@ -39,11 +39,6 @@ public class SecurityConfig {
     private RSAPrivateKey privateKey;
 
     @Bean
-    BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // dev or prod swagger permissions
         httpSecurity.authorizeHttpRequests(configurer -> {
@@ -73,6 +68,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
