@@ -17,11 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-<<<<<<< HEAD
 @Table(name = "tb_store")
-=======
-@Table(name = "TB_STORE")
->>>>>>> develop
 public class Store implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,12 +35,9 @@ public class Store implements Serializable {
     @OneToMany(mappedBy = "store")
     private Set<FashionLine> fashionLines;
 
-<<<<<<< HEAD
     @OneToMany(mappedBy = "store")
     private Set<Order> orders;
 
-=======
->>>>>>> develop
     public Store(CreateStoreDTO storeDTO) {
         this.name = storeDTO.name();
         this.description = storeDTO.description();

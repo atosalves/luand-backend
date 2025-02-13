@@ -59,11 +59,7 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(configurer -> configurer
-<<<<<<< HEAD
                         .requestMatchers(HttpMethod.POST, "/login", "/users", "/stores", "/error").permitAll()
-=======
-                        .requestMatchers(HttpMethod.POST, "/login", "/users", "/error").permitAll()
->>>>>>> develop
 
                         .requestMatchers(HttpMethod.GET, "/models", "/models/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
