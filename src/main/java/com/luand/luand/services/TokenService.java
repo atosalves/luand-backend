@@ -4,14 +4,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import com.luand.luand.entities.dto.TokenDTO;
+import com.luand.luand.entities.dto.TokenResponseDTO;
 
 import lombok.AllArgsConstructor;
 
@@ -20,40 +18,22 @@ import lombok.AllArgsConstructor;
 public class TokenService {
 
         private final JwtEncoder jwtEncoder;
-        private final JwtDecoder jwtDecoder;
 
-        private static final int MINUTES_EXPIRATION_ACCESS_TOKEN = 20;
-        private static final int DAYS_EXPIRATION_REFRESH_TOKEN = 7;
+        private static final int HOURS_EXPIRATION_TOKEN = 20;
         private static final ZoneId ZONE_ID = ZoneId.of("America/Recife");
 
-        public TokenDTO getTokens(String userIdentifty) {
-                var accessToken = generateToken(userIdentifty, getAccessTokenExpirationTime());
-                var refreshToken = generateToken(userIdentifty, getRefreshTokenExpirationTime());
-
-                return new TokenDTO(accessToken, refreshToken);
+        public TokenResponseDTO getToken(String userIdentifty) {
+                var token = generateToken(userIdentifty);
+                return new TokenResponseDTO(token);
         }
 
-        public TokenDTO refreshAccessToken(String refreshToken) {
-                var decodedJwt = jwtDecoder.decode(refreshToken);
-                Instant expirationTime = decodedJwt.getExpiresAt();
-
-                if (expirationTime == null || Instant.now().isAfter(expirationTime)) {
-                        throw new BadCredentialsException("Refresh token expired, please login again.");
-                }
-
-                String userIdentity = decodedJwt.getSubject();
-                String newAccessToken = generateToken(userIdentity, getAccessTokenExpirationTime());
-
-                return new TokenDTO(newAccessToken, refreshToken);
-        }
-
-        private String generateToken(String userIdentifty, Instant expirationDuration) {
+        private String generateToken(String userIdentifty) {
 
                 var claims = JwtClaimsSet.builder()
                                 .issuer("luand-backend")
                                 .subject(userIdentifty)
                                 .issuedAt(getCreationTime())
-                                .expiresAt(expirationDuration)
+                                .expiresAt(getExpirationTime())
                                 .claim("loggedIn", true)
                                 .build();
 
@@ -66,14 +46,10 @@ public class TokenService {
                 return ZonedDateTime.now(ZONE_ID).toInstant();
         }
 
-        private Instant getAccessTokenExpirationTime() {
-                return ZonedDateTime.now(ZONE_ID).plusMinutes(MINUTES_EXPIRATION_ACCESS_TOKEN)
+        private Instant getExpirationTime() {
+                return ZonedDateTime.now(ZONE_ID).plusHours(HOURS_EXPIRATION_TOKEN)
                                 .toInstant();
         }
 
-        private Instant getRefreshTokenExpirationTime() {
-                return ZonedDateTime.now(ZONE_ID).plusDays(DAYS_EXPIRATION_REFRESH_TOKEN)
-                                .toInstant();
-        }
 
 }
