@@ -33,7 +33,6 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(CreateOrderDTO data) {
-
         var store = storeService.getStoreById(data.storeId());
         var order = new Order(data, store);
         return orderRepository.save(order);

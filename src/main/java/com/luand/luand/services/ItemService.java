@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final FashionLineService fashionLineService;
+    private final PrintService fashionLineService;
 
     @Transactional(readOnly = true)
     public Item getItemById(Long id) {
@@ -42,8 +42,8 @@ public class ItemService {
     @Transactional
     public Item createItem(CreateItemDTO data) {
 
-        var fashionLine = fashionLineService.getFashionLineById(data.fashionLineId());
-        var item = new Item(data, fashionLine);
+        var print = fashionLineService.getPrintById(data.fashionLineId());
+        var item = new Item(data, print);
 
         return itemRepository.save(item);
     }
@@ -65,8 +65,8 @@ public class ItemService {
         item.setSize(data.size());
         item.setAvailableQuantity(data.availableQuantity());
 
-        var fashionLine = fashionLineService.getFashionLineById(data.fashionLineDTO());
-        item.setFashionLine(fashionLine);
+        var fashionLine = fashionLineService.getPrintById(data.fashionLineDTO());
+        item.setPrint(fashionLine);
 
         return itemRepository.save(item);
     }

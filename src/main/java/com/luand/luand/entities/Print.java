@@ -3,7 +3,7 @@ package com.luand.luand.entities;
 import java.io.Serializable;
 import java.util.Set;
 
-import com.luand.luand.entities.dto.fashionLine.CreateFashionLineDTO;
+import com.luand.luand.entities.dto.print.CreatePrintDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_fashion_line")
-public class FashionLine implements Serializable {
+@Table(name = "tb_print")
+public class Print implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +32,7 @@ public class FashionLine implements Serializable {
     private String name;
 
     @Column(unique = true)
-    private String print;
+    private String image;
 
     @ManyToOne
     private Model model;
@@ -40,13 +40,13 @@ public class FashionLine implements Serializable {
     @ManyToOne
     private Store store;
 
-    @OneToMany(mappedBy = "fashionLine")
+    @OneToMany(mappedBy = "print")
     @EqualsAndHashCode.Exclude
     private Set<Item> itens;
 
-    public FashionLine(CreateFashionLineDTO fashionLineDTO, Model model) {
-        this.name = fashionLineDTO.name();
-        this.print = fashionLineDTO.print();
+    public Print(CreatePrintDTO print, Model model) {
+        this.name = print.name();
+        this.image = print.image();
         this.model = model;
     }
 

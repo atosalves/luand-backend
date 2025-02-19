@@ -35,13 +35,13 @@ public class Item implements Serializable {
     private int availableQuantity;
 
     @ManyToOne
-    private FashionLine fashionLine;
+    private Print print;
 
-    public Item(CreateItemDTO itemDTO, FashionLine fashionLine) {
+    public Item(CreateItemDTO itemDTO, Print print) {
         this.size = itemDTO.size();
         this.color = itemDTO.color();
         this.availableQuantity = itemDTO.availableQuantity();
-        this.fashionLine = fashionLine;
+        this.print = print;
     }
 
 }
