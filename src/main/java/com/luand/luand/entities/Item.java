@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.luand.luand.entities.dto.item.CreateItemDTO;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,12 +31,16 @@ public class Item implements Serializable {
     @Enumerated(EnumType.STRING)
     private Size size;
 
-    private String color;
-
-    private int availableQuantity;
+    @Column(unique = true)
+    private String ref;
 
     @ManyToOne
     private Print print;
+
+    @ManyToOne
+    private Color color;
+
+    private int availableQuantity;
 
     public Item(CreateItemDTO itemDTO, Print print) {
         this.size = itemDTO.size();

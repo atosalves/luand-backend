@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.luand.luand.entities.dto.item.CreateItemDTO;
 import com.luand.luand.entities.dto.item.ItemDetailsDTO;
-import com.luand.luand.entities.dto.item.ItemQuantityUpdateDTO;
 import com.luand.luand.entities.dto.item.UpdateItemDTO;
 import com.luand.luand.services.ItemService;
 
@@ -35,32 +34,10 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @Operation(summary = "Retrieve an item by ID", description = "Fetch details of a specific item using its unique identifier.")
+    @Operation(summary = "Retorna todos os itens", description = "Retorna uma lista com todos os itens cadastrados no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Item not found")
+            @ApiResponse(responseCode = "200", description = "Lista de itens recuperada com sucesso")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<ItemDetailsDTO> getItemById(
-            @Parameter(description = "ID of the item to retrieve") @PathVariable Long id) {
-        var item = itemService.getItemById(id);
-        return ResponseEntity.ok(new ItemDetailsDTO(item));
-    }
-
-    @Operation(summary = "Retrieve an item by color", description = "Fetch details of an item using its color.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Item not found")
-    })
-    @GetMapping("/color/{color}")
-    public ResponseEntity<ItemDetailsDTO> getItemByColor(
-            @Parameter(description = "Color of the item to retrieve") @PathVariable String color) {
-        var item = itemService.getItemByColor(color);
-        return ResponseEntity.ok(new ItemDetailsDTO(item));
-    }
-
-    @Operation(summary = "Retrieve all items", description = "Fetch a list of all items.")
-    @ApiResponse(responseCode = "200", description = "List of items retrieved successfully")
     @GetMapping
     public ResponseEntity<List<ItemDetailsDTO>> getAllItems() {
         var result = itemService.getAllItems().stream().map(item -> new ItemDetailsDTO(item))
@@ -69,11 +46,10 @@ public class ItemController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Create a new item", description = "Add a new item to the system.")
+    @Operation(summary = "Cria um novo item", description = "Cria um novo item no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "404", description = "Fashion not found")
+            @ApiResponse(responseCode = "200", description = "Item criado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
     })
     @PostMapping
     public ResponseEntity<ItemDetailsDTO> createItem(@RequestBody @Valid CreateItemDTO data) {
@@ -81,44 +57,27 @@ public class ItemController {
         return ResponseEntity.ok(new ItemDetailsDTO(item));
     }
 
-    @Operation(summary = "Update available quantity of an item", description = "Modify the available quantity of a specific item.")
+    @Operation(summary = "Atualiza um item", description = "Atualiza um item no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Available quantity updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Item not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "404", description = "Fashion not found")
-    })
-    @PutMapping("/{id}/available-quantity")
-    public ResponseEntity<ItemDetailsDTO> updateAvailableQuantityItem(
-            @Parameter(description = "ID of the item to update") @PathVariable Long id,
-            @RequestBody @Valid ItemQuantityUpdateDTO data) {
-        var item = itemService.updateAvailableQuantityItem(id, data);
-        return ResponseEntity.ok(new ItemDetailsDTO(item));
-    }
-
-    @Operation(summary = "Update an item", description = "Update the details of an existing item.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Item not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "404", description = "Fashion not found")
+            @ApiResponse(responseCode = "200", description = "Item atualizado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ItemDetailsDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
+            @ApiResponse(responseCode = "404", description = "Item não encontrado"),
     })
     @PutMapping("/{id}")
     public ResponseEntity<ItemDetailsDTO> updateItem(
-            @Parameter(description = "ID of the item to update") @PathVariable Long id,
+            @Parameter(description = "ID para atualizar o item") @PathVariable Long id,
             @RequestBody @Valid UpdateItemDTO data) {
         var item = itemService.updateItem(id, data);
         return ResponseEntity.ok(new ItemDetailsDTO(item));
     }
 
-    @Operation(summary = "Delete an item", description = "Remove an item from the system by its ID.")
+    @Operation(summary = "Deleta um item", description = "Deleta um item no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Item not found"),
-            @ApiResponse(responseCode = "404", description = "Fashion not found")
+            @ApiResponse(responseCode = "204", description = "Item deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Item não encontrado"),
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@Parameter(description = "ID of the item to delete") @PathVariable Long id) {
+    public ResponseEntity<Void> deleteItem(@Parameter(description = "ID para deletar o item") @PathVariable Long id) {
         itemService.deleteItem(id);
         return ResponseEntity.noContent().build();
     }

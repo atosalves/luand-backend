@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luand.luand.entities.Item;
 import com.luand.luand.entities.dto.item.CreateItemDTO;
-import com.luand.luand.entities.dto.item.ItemQuantityUpdateDTO;
 import com.luand.luand.entities.dto.item.UpdateItemDTO;
-import com.luand.luand.exception.item.ItemNotFoundException;
+import com.luand.luand.exceptions.custom_exception.item.ItemNotFoundException;
 import com.luand.luand.repositories.ItemRepository;
 
 import lombok.AllArgsConstructor;
@@ -19,18 +18,12 @@ import lombok.AllArgsConstructor;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final PrintService fashionLineService;
+    private final PrintService printService;
 
     @Transactional(readOnly = true)
     public Item getItemById(Long id) {
         return itemRepository.findById(id)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
-    }
-
-    @Transactional(readOnly = true)
-    public Item getItemByColor(String color) {
-        return itemRepository.findByColor(color)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+                .orElseThrow(() -> new ItemNotFoundException());
     }
 
     @Transactional(readOnly = true)
@@ -42,17 +35,10 @@ public class ItemService {
     @Transactional
     public Item createItem(CreateItemDTO data) {
 
-        var print = fashionLineService.getPrintById(data.fashionLineId());
+        var print = printService.getPrintById(data.printId());
         var item = new Item(data, print);
 
-        return itemRepository.save(item);
-    }
-
-    @Transactional
-    public Item updateAvailableQuantityItem(Long id, ItemQuantityUpdateDTO data) {
-        var item = getItemById(id);
-
-        item.setAvailableQuantity(data.quantity());
+        item.setRef(item.getPrint().getModel().getRef() + "-" + item.getSize() + "-" + item.getColor() + item.getId());
 
         return itemRepository.save(item);
     }
@@ -65,7 +51,7 @@ public class ItemService {
         item.setSize(data.size());
         item.setAvailableQuantity(data.availableQuantity());
 
-        var fashionLine = fashionLineService.getPrintById(data.fashionLineDTO());
+        var fashionLine = printService.getPrintById(data.printId());
         item.setPrint(fashionLine);
 
         return itemRepository.save(item);
