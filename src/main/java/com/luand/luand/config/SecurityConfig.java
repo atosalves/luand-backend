@@ -44,7 +44,7 @@ public class SecurityConfig {
             "/webjars/**"
     };
     private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/fashion-lines", "/fashion-lines/**"
+            "/prints", "/prints/**"
     };
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/login", "/users"
