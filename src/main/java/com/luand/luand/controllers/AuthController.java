@@ -24,11 +24,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "User login", description = "Authenticates a user with their username and password. If successful, returns an HTTP-only cookie containing a JWT token for authentication.")
+    @Operation(summary = "Autentica um usuário", description = "Autentica um usuário no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login successful, JWT token set in cookie"),
-            @ApiResponse(responseCode = "401", description = "Invalid username or password"),
-            @ApiResponse(responseCode = "404", description = "User not found")
+            @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
     })
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody @Valid LoginDTO data) {
