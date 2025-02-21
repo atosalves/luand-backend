@@ -7,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luand.luand.entities.User;
 import com.luand.luand.entities.dto.user.CreateUserDTO;
 import com.luand.luand.entities.dto.user.UpdateUserDTO;
-import com.luand.luand.exception.user.UserAlreadyExistsException;
-import com.luand.luand.exception.user.UserNotFoundException;
+import com.luand.luand.exceptions.custom_exception.user.UserNotFoundException;
 import com.luand.luand.repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -23,22 +22,17 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     @Transactional
     public User createUser(CreateUserDTO data) {
-        var userByEmail = userRepository.findByEmail(data.email());
-        if (userByEmail.isPresent()) {
-            throw new UserAlreadyExistsException("Email is already in use");
-        }
-
         var user = new User(data);
         user.setPassword(passwordEncoder.encode(data.password()));
 
