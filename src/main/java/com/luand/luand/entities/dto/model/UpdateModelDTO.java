@@ -10,9 +10,10 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record UpdateModelDTO(
-                @NotBlank(message = "Name is required") @Size(min = 3, max = 72, message = "Name must be between 3 and 72 characters") String name,
-                @NotBlank(message = "Username is required") @Size(min = 3, max = 255, message = "Description must be between 3 and 255 characters") String description,
-                @Positive(message = "Price must be greater than zero") @NotNull(message = "Price is required") BigDecimal price,
-                @NotEmpty(message = "At least one size is required") Set<com.luand.luand.entities.Size> supportedSizes) {
+                @NotBlank(message = "{name.not-blank}") @Size(min = 3, max = 72, message = "{name.size}") String name,
+                @NotBlank(message = "{ref.not-blank}") @Size(max = 12, message = "{ref.size}") String ref,
+                @NotBlank(message = "{description.not-blank}") @Size(min = 3, max = 255, message = "{description.size}") String description,
+                @NotNull(message = "{price.not-null}") @Positive(message = "{price.positive}") BigDecimal price,
+                @NotEmpty(message = "{supported-sizes.not-empty}") Set<com.luand.luand.entities.Size> supportedSizes) {
 
 }

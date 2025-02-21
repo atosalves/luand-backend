@@ -9,8 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luand.luand.entities.Model;
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 import com.luand.luand.entities.dto.model.UpdateModelDTO;
-import com.luand.luand.exception.model.ModelAlreadyExistsException;
-import com.luand.luand.exception.model.ModelNotFoundException;
+import com.luand.luand.exceptions.custom_exception.model.ModelNotFoundException;
 import com.luand.luand.repositories.ModelRepository;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ public class ModelService {
     @Transactional(readOnly = true)
     protected Model getModelById(Long id) {
         return modelRepository.findById(id)
-                .orElseThrow(() -> new ModelNotFoundException("Model not found"));
+                .orElseThrow(() -> new ModelNotFoundException());
     }
 
     @Transactional(readOnly = true)
@@ -36,12 +35,6 @@ public class ModelService {
     @Transactional
     public Model createModel(CreateModelDTO data) {
         var model = new Model(data);
-
-        var isModelPresent = modelRepository.findByName(model.getName()).isPresent();
-
-        if (isModelPresent) {
-            throw new ModelAlreadyExistsException("Name is already in use");
-        }
 
         return modelRepository.save(model);
     }

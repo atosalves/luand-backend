@@ -31,12 +31,15 @@ public class Model implements Serializable {
     @Column(unique = true)
     private String name;
 
-    private String description;
-
-    private BigDecimal price;
+    @Column(unique = true)
+    private String ref;
 
     @Convert(converter = SizeSetConverter.class)
     private Set<Size> supportedSizes;
+
+    private BigDecimal price;
+
+    private String description;
 
     public Model(CreateModelDTO modelDTO) {
         this.name = modelDTO.name();

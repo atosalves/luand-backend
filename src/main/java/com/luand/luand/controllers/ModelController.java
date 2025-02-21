@@ -34,8 +34,10 @@ public class ModelController {
 
         private final ModelService modelService;
 
-        @Operation(summary = "Retrieve all models", description = "Fetch a list of all models.")
-        @ApiResponse(responseCode = "200", description = "List of models retrieved successfully")
+        @Operation(summary = "Retorna todos os modelos", description = "Retorna uma lista com todos os modelos cadastrados no sistema.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Lista de modelos recuperada com sucesso")
+        })
         @GetMapping
         public ResponseEntity<List<ModelDetailsDTO>> getAllModels() {
                 var result = modelService.getAllModels().stream().map(model -> new ModelDetailsDTO(model))
@@ -43,11 +45,10 @@ public class ModelController {
                 return ResponseEntity.ok(result);
         }
 
-        @Operation(summary = "Create a new model", description = "Add a new model to the system.")
+        @Operation(summary = "Cria um novo modelo", description = "Cria um novo modelo no sistema.")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Model created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelDetailsDTO.class))),
-                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
-                        @ApiResponse(responseCode = "409", description = "Name is already in use")
+                        @ApiResponse(responseCode = "200", description = "Modelo criado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelDetailsDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos")
         })
         @PostMapping
         public ResponseEntity<ModelDetailsDTO> createModel(@RequestBody @Valid CreateModelDTO data) {
@@ -55,29 +56,28 @@ public class ModelController {
                 return ResponseEntity.ok(new ModelDetailsDTO(model));
         }
 
-        @Operation(summary = "Update a model", description = "Update the details of an existing model.")
+        @Operation(summary = "Atualiza um modelo", description = "Atualiza um modelo no sistema.")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Model updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelDetailsDTO.class))),
-                        @ApiResponse(responseCode = "404", description = "Model not found"),
-                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
-                        @ApiResponse(responseCode = "409", description = "Name is already in use")
+                        @ApiResponse(responseCode = "200", description = "Modelo atualizado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ModelDetailsDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
+                        @ApiResponse(responseCode = "404", description = "Modelo não encontrado")
         })
         @PutMapping("/{id}")
         public ResponseEntity<ModelDetailsDTO> updateModel(
-                        @Parameter(description = "ID of the model to update") @PathVariable Long id,
+                        @Parameter(description = "ID para atualizar o modelo") @PathVariable Long id,
                         @RequestBody @Valid UpdateModelDTO data) {
                 var model = modelService.updateModel(id, data);
                 return ResponseEntity.ok(new ModelDetailsDTO(model));
         }
 
-        @Operation(summary = "Delete a model", description = "Remove a model from the system by its ID.")
+        @Operation(summary = "Deleta um modelo", description = "Deleta um modelo no sistema.")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "204", description = "Model deleted successfully"),
-                        @ApiResponse(responseCode = "404", description = "Model not found")
+                        @ApiResponse(responseCode = "204", description = "Modelo deletado com sucesso"),
+                        @ApiResponse(responseCode = "404", description = "Modelo não encontrado")
         })
         @DeleteMapping("/{id}")
         public ResponseEntity<Void> deleteModel(
-                        @Parameter(description = "ID of the model to delete") @PathVariable Long id) {
+                        @Parameter(description = "ID para deletar o modelo") @PathVariable Long id) {
                 modelService.deleteModel(id);
                 return ResponseEntity.noContent().build();
         }
