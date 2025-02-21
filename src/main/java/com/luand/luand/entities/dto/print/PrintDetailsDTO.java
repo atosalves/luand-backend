@@ -1,18 +1,23 @@
 package com.luand.luand.entities.dto.print;
 
+import java.util.Set;
+
+import com.luand.luand.entities.Image;
 import com.luand.luand.entities.Print;
-import com.luand.luand.entities.dto.model.ModelSummaryDTO;
+import com.luand.luand.entities.dto.model.ModelDetailsDTO;
 
 public record PrintDetailsDTO(
         Long id,
         String name,
-        String image,
-        ModelSummaryDTO modelSummaryDTO) {
-    public PrintDetailsDTO(Print fashionLine) {
+        Image coverImage,
+        Set<Image> images,
+        ModelDetailsDTO modelDetailsDTO) {
+    public PrintDetailsDTO(Print print) {
         this(
-                fashionLine.getId(),
-                fashionLine.getName(),
-                fashionLine.getImage(),
-                new ModelSummaryDTO(fashionLine.getModel()));
+                print.getId(),
+                print.getName(),
+                print.getCoverImage(),
+                print.getImages(),
+                new ModelDetailsDTO(print.getModel()));
     }
 }

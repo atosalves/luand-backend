@@ -2,13 +2,14 @@ package com.luand.luand.services;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.luand.luand.entities.Print;
 import com.luand.luand.entities.dto.print.CreatePrintDTO;
 import com.luand.luand.entities.dto.print.UpdatePrintDTO;
-import com.luand.luand.exception.print.PrintNotFoundException;
+import com.luand.luand.exceptions.custom_exception.print.PrintNotFoundException;
 import com.luand.luand.repositories.PrintRepository;
 
 import lombok.AllArgsConstructor;
@@ -39,8 +40,7 @@ public class PrintService {
     public Print updatePrint(Long id, UpdatePrintDTO data) {
         var print = getPrintById(id);
 
-        print.setName(data.name());
-        print.setImage(data.print());
+        BeanUtils.copyProperties(data, print);
 
         var model = modelService.getModelById(data.modelId());
         print.setModel(model);
@@ -49,7 +49,7 @@ public class PrintService {
     }
 
     @Transactional
-    public void deleteFashionLine(Long id) {
+    public void deletePrint(Long id) {
         getPrintById(id);
         printRepository.deleteById(id);
     }
@@ -57,7 +57,7 @@ public class PrintService {
     @Transactional(readOnly = true)
     protected Print getPrintById(Long id) {
         return printRepository.findById(id)
-                .orElseThrow(() -> new PrintNotFoundException("Print not found"));
+                .orElseThrow(() -> new PrintNotFoundException());
     }
 
 }
