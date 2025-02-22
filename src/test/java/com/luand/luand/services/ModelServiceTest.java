@@ -70,7 +70,7 @@ public class ModelServiceTest {
         void shouldThrowNotFoundModelWhenModelById() {
                 var modelId = 1L;
 
-                when(modelRepository.findById(modelId)).thenThrow(new ModelNotFoundException());
+                when(modelRepository.findById(modelId)).thenReturn(Optional.empty());
 
                 assertThrows(ModelNotFoundException.class, () -> {
                         modelService.getModelById(modelId);
