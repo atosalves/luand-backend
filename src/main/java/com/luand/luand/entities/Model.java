@@ -43,6 +43,7 @@ public class Model implements Serializable {
 
     public Model(CreateModelDTO modelDTO) {
         this.name = modelDTO.name();
+        this.ref = modelDTO.ref();
         this.description = modelDTO.description();
         this.price = modelDTO.price();
         this.supportedSizes = modelDTO.supportedSizes();
