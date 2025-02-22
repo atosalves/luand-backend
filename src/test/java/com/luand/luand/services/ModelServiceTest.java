@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -152,7 +153,7 @@ public class ModelServiceTest {
                 var modelId = 1L;
                 model.setId(modelId);
 
-                when(modelRepository.findById(modelId)).thenReturn(Optional.ofNullable(model));
+                when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
                 when(modelRepository.save(any(Model.class))).thenReturn(model);
 
                 var updateModelDTO = new UpdateModelDTO(
@@ -172,6 +173,30 @@ public class ModelServiceTest {
                 assertEquals(BigDecimal.valueOf(20), result.getPrice());
                 assertEquals(Set.of(Size.GG), result.getSupportedSizes());
 
+                verify(modelRepository).findById(modelId);
                 verify(modelRepository).save(any(Model.class));
+        }
+
+        @Test
+        void shouldDeleteModel() {
+                var createModelDTO = new CreateModelDTO(
+                                "name_test",
+                                "ref_test",
+                                "description_test",
+                                BigDecimal.valueOf(10),
+                                Set.of(Size.P, Size.M));
+
+                var model = new Model(createModelDTO);
+
+                var modelId = 1L;
+                model.setId(modelId);
+
+                when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
+                doNothing().when(modelRepository).deleteById(modelId);
+
+                modelService.deleteModel(modelId);
+
+                verify(modelRepository).findById(modelId);
+                verify(modelRepository).deleteById(modelId);
         }
 }
