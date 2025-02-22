@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,48 @@ public class ModelServiceTest {
         ModelService modelService;
 
         @Test
+        void shouldReturnAllModels() {
+                var createModelDTO = new CreateModelDTO(
+                                "name_test",
+                                "ref_test",
+                                "description_test",
+                                BigDecimal.valueOf(10),
+                                Set.of(Size.P, Size.M));
+
+                var model = new Model(createModelDTO);
+
+                when(modelRepository.findAll()).thenReturn(List.of(model));
+
+                var result = modelService.getAllModels();
+
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                assertEquals("name_test", result.get(0).getName());
+
+                verify(modelRepository).findAll();
+        }
+
+        @Test
+        void shouldReturnAllModelsEmpty() {
+
+                var result = modelService.getAllModels();
+
+                assertNotNull(result);
+
+                assertEquals(0, result.size());
+
+                verify(modelRepository).findAll();
+        }
+
+        @Test
         void shouldCreateModel() {
-                var createModelDTO = new CreateModelDTO("name_test", "ref_test", "description_test", BigDecimal.valueOf(10), Set.of(Size.P, Size.M));
+                var createModelDTO = new CreateModelDTO(
+                                "name_test",
+                                "ref_test",
+                                "description_test",
+                                BigDecimal.valueOf(10),
+                                Set.of(Size.P, Size.M));
+
                 var model = new Model(createModelDTO);
                 
                 when(modelRepository.save(any(Model.class))).thenReturn(model);
@@ -40,7 +81,7 @@ public class ModelServiceTest {
                 var result = modelService.createModel(createModelDTO);
 
                 assertNotNull(result);
-                
+
                 assertEquals("name_test", result.getName());
                 assertEquals("ref_test", result.getRef());
                 assertEquals("description_test", result.getDescription());
