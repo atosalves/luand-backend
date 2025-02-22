@@ -21,6 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.luand.luand.entities.Model;
 import com.luand.luand.entities.Size;
 import com.luand.luand.entities.dto.model.CreateModelDTO;
+import com.luand.luand.entities.dto.model.UpdateModelDTO;
 import com.luand.luand.exceptions.custom_exception.model.ModelNotFoundException;
 import com.luand.luand.repositories.ModelRepository;
 
@@ -133,6 +134,43 @@ public class ModelServiceTest {
                 assertEquals("description_test", result.getDescription());
                 assertEquals(BigDecimal.valueOf(10), result.getPrice());
                 assertEquals(Set.of(Size.P, Size.M), result.getSupportedSizes());
+
+                verify(modelRepository).save(any(Model.class));
+        }
+
+        @Test
+        void shouldUpdateModel() {
+                var createModelDTO = new CreateModelDTO(
+                                "name_test",
+                                "ref_test",
+                                "description_test",
+                                BigDecimal.valueOf(10),
+                                Set.of(Size.P, Size.M));
+
+                var model = new Model(createModelDTO);
+
+                var modelId = 1L;
+                model.setId(modelId);
+
+                when(modelRepository.findById(modelId)).thenReturn(Optional.ofNullable(model));
+                when(modelRepository.save(any(Model.class))).thenReturn(model);
+
+                var updateModelDTO = new UpdateModelDTO(
+                                "name_test_updated",
+                                "ref_test_updated",
+                                "description_test_updated",
+                                BigDecimal.valueOf(20),
+                                Set.of(Size.GG));
+
+                var result = modelService.updateModel(modelId, updateModelDTO);
+
+                assertNotNull(result);
+
+                assertEquals("name_test_updated", result.getName());
+                assertEquals("ref_test_updated", result.getRef());
+                assertEquals("description_test_updated", result.getDescription());
+                assertEquals(BigDecimal.valueOf(20), result.getPrice());
+                assertEquals(Set.of(Size.GG), result.getSupportedSizes());
 
                 verify(modelRepository).save(any(Model.class));
         }
