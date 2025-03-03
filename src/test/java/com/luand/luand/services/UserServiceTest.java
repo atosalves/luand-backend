@@ -1,8 +1,10 @@
 package com.luand.luand.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -179,5 +181,33 @@ public class UserServiceTest {
 
         verify(userRepository).findById(userId);
         verify(userRepository).deleteById(userId);
+    }
+
+    @Test
+    void shouldReturnTrueWhenPasswordIsMatches() {
+        var rawPassword = "password_test";
+        var encodedPassword = "encoded_password_test";
+
+        when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
+
+        var validatedPassword = userService.validatePassword(rawPassword, encodedPassword);
+
+        assertTrue(validatedPassword);
+
+        verify(passwordEncoder).matches(rawPassword, encodedPassword);
+    }
+
+    @Test
+    void shouldReturnFalseWhenPasswordIsNotMatches() {
+        var rawPassword = "password_test";
+        var encodedPassword = "encoded_password_test";
+
+        when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(false);
+
+        var validatedPassword = userService.validatePassword(rawPassword, encodedPassword);
+
+        assertFalse(validatedPassword);
+
+        verify(passwordEncoder).matches(rawPassword, encodedPassword);
     }
 }
