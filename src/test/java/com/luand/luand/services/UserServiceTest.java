@@ -67,4 +67,40 @@ public class UserServiceTest {
 
         verify(userRepository).findById(userId);
     }
+
+    @Test
+    void shouldReturnUserByEmail() {
+        var createUserDTO = new CreateUserDTO(
+                "name_test",
+                "email_test",
+                "password_test");
+
+        var user = new User(createUserDTO);
+
+        var email = "email_test";
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        var result = userService.getUserByEmail(email);
+
+        assertNotNull(result);
+
+        assertEquals("name_test", result.getName());
+        assertEquals("email_test", result.getEmail());
+        assertEquals("password_test", result.getPassword());
+
+        verify(userRepository).findByEmail(email);
+    }
+
+    @Test
+    void shouldThrowNotFoundUserWhenUserByEmail() {
+        var email = "email_test";
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.getUserByEmail(email));
+
+        verify(userRepository).findByEmail(email);
+    }
+
 }
