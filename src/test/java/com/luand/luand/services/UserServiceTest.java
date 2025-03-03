@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.luand.luand.entities.User;
 import com.luand.luand.entities.dto.user.CreateUserDTO;
+import com.luand.luand.entities.dto.user.UpdateUserDTO;
 import com.luand.luand.exceptions.custom_exception.user.UserNotFoundException;
 import com.luand.luand.repositories.UserRepository;
 
@@ -123,6 +124,38 @@ public class UserServiceTest {
         assertEquals("name_test", createdUser.getName());
         assertEquals("email_test", createdUser.getEmail());
         assertEquals("password_test", createdUser.getPassword());
+
+        verify(passwordEncoder).encode(anyString());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void shoudUpdateUser() {
+
+        var createUserDTO = new CreateUserDTO(
+                "name_test",
+                "email_test",
+                "password_test");
+
+        var user = new User(createUserDTO);
+        var userId = 1L;
+        user.setId(userId);
+
+        when(passwordEncoder.encode(anyString())).thenReturn("updated_password_test");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(invoker -> invoker.getArgument(0));
+
+        var updateUserDTO = new UpdateUserDTO(
+                "updated_name_test",
+                "updated_email_test",
+                "updated_password_test");
+
+        var updatedUser = userService.updateUser(user.getId(), updateUserDTO);
+
+        assertNotNull(updateUserDTO);
+        assertEquals("updated_name_test", updatedUser.getName());
+        assertEquals("updated_email_test", updatedUser.getEmail());
+        assertEquals("updated_password_test", updatedUser.getPassword());
 
         verify(passwordEncoder).encode(anyString());
         verify(userRepository).save(user);
