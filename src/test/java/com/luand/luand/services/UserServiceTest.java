@@ -3,6 +3,8 @@ package com.luand.luand.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -103,4 +105,26 @@ public class UserServiceTest {
         verify(userRepository).findByEmail(email);
     }
 
+    @Test
+    void shoudCreateUser() {
+        var createUserDTO = new CreateUserDTO(
+                "name_test",
+                "email_test",
+                "password_test");
+
+        var user = new User(createUserDTO);
+
+        when(passwordEncoder.encode(anyString())).thenReturn("password_test");
+        when(userRepository.save(any(User.class))).thenAnswer(invoker -> invoker.getArgument(0));
+
+        var createdUser = userService.createUser(createUserDTO);
+
+        assertNotNull(createUserDTO);
+        assertEquals("name_test", createdUser.getName());
+        assertEquals("email_test", createdUser.getEmail());
+        assertEquals("password_test", createdUser.getPassword());
+
+        verify(passwordEncoder).encode(anyString());
+        verify(userRepository).save(user);
+    }
 }
