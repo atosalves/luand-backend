@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -131,7 +132,6 @@ public class UserServiceTest {
 
     @Test
     void shoudUpdateUser() {
-
         var createUserDTO = new CreateUserDTO(
                 "name_test",
                 "email_test",
@@ -159,5 +159,25 @@ public class UserServiceTest {
 
         verify(passwordEncoder).encode(anyString());
         verify(userRepository).save(user);
+    }
+
+    @Test
+    void shouldDeleteUser() {
+        var createUserDTO = new CreateUserDTO(
+                "name_test",
+                "email_test",
+                "password_test");
+
+        var user = new User(createUserDTO);
+        var userId = 1L;
+        user.setId(userId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        doNothing().when(userRepository).deleteById(userId);
+
+        userService.deleteUser(userId);
+
+        verify(userRepository).findById(userId);
+        verify(userRepository).deleteById(userId);
     }
 }
