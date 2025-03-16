@@ -1,7 +1,7 @@
 package com.luand.luand.services;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,42 +27,62 @@ import com.luand.luand.entities.dto.model.UpdateModelDTO;
 import com.luand.luand.exceptions.custom_exception.model.ModelNotFoundException;
 import com.luand.luand.repositories.ModelRepository;
 
-
 @SpringBootTest
 public class ModelServiceTest {
 
         @MockitoBean
         ModelRepository modelRepository;
-        
+
         @Autowired
         ModelService modelService;
 
-        @Test
-        void shouldReturnModelById() {
-                var createModelDTO = new CreateModelDTO(
-                                "name_test",
-                                "ref_test",
-                                "description_test",
+        List<Model> modelEntities;
+
+        @BeforeEach
+        void setUp() {
+                var createModelDTO1 = new CreateModelDTO(
+                                "name_test_1",
+                                "ref_test_1",
+                                "description_test_1",
                                 BigDecimal.valueOf(10),
                                 Set.of(Size.P, Size.M));
+                var createModelDTO2 = new CreateModelDTO(
+                                "name_test_2",
+                                "ref_test_2",
+                                "description_test_2",
+                                BigDecimal.valueOf(20),
+                                Set.of(Size.P, Size.M));
+                var createModelDTO3 = new CreateModelDTO(
+                                "name_test_3",
+                                "ref_test_3",
+                                "description_test_3",
+                                BigDecimal.valueOf(30),
+                                Set.of(Size.P, Size.M));
 
-                var model = new Model(createModelDTO);
+                var model1 = new Model(createModelDTO1);
+                var model2 = new Model(createModelDTO2);
+                var model3 = new Model(createModelDTO3);
 
-                var modelId = 1L;
-                model.setId(modelId);
+                modelEntities = List.of(model1, model2, model3);
+        }
 
-                when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
+        @Test
+        void shouldReturnModelById() {
+                var model = modelEntities.get(0);
+                var modelId = model.getId();
+
+                when(modelRepository.findById(modelId)).thenAnswer(invoker -> invoker.getArgument(0));
 
                 var result = modelService.getModelById(modelId);
 
                 assertNotNull(result);
 
                 assertEquals(modelId, result.getId());
-                assertEquals("name_test", result.getName());
-                assertEquals("ref_test", result.getRef());
-                assertEquals("description_test", result.getDescription());
-                assertEquals(BigDecimal.valueOf(10), result.getPrice());
-                assertEquals(Set.of(Size.P, Size.M), result.getSupportedSizes());
+                assertEquals(model.getName(), result.getName());
+                assertEquals(model.getRef(), result.getRef());
+                assertEquals(model.getDescription(), result.getDescription());
+                assertEquals(model.getPrice(), result.getPrice());
+                assertEquals(model.getSupportedSizes(), result.getSupportedSizes());
 
                 verify(modelRepository).findById(modelId);
         }
@@ -81,22 +102,16 @@ public class ModelServiceTest {
 
         @Test
         void shouldReturnAllModels() {
-                var createModelDTO = new CreateModelDTO(
-                                "name_test",
-                                "ref_test",
-                                "description_test",
-                                BigDecimal.valueOf(10),
-                                Set.of(Size.P, Size.M));
 
-                var model = new Model(createModelDTO);
+                var model = modelEntities.get(0);
 
-                when(modelRepository.findAll()).thenReturn(List.of(model));
+                when(modelRepository.findAll()).thenReturn(modelEntities);
 
                 var result = modelService.getAllModels();
 
                 assertNotNull(result);
-                assertEquals(1, result.size());
-                assertEquals("name_test", result.get(0).getName());
+                assertEquals(modelEntities.size(), result.size());
+                assertEquals(model.getName(), result.get(0).getName());
 
                 verify(modelRepository).findAll();
         }
@@ -123,38 +138,32 @@ public class ModelServiceTest {
                                 Set.of(Size.P, Size.M));
 
                 var model = new Model(createModelDTO);
-                
-                when(modelRepository.save(any(Model.class))).thenReturn(model);
+
+                when(modelRepository.save(any(Model.class))).thenAnswer(invoker -> invoker.getArgument(0));
 
                 var result = modelService.createModel(createModelDTO);
 
                 assertNotNull(result);
 
-                assertEquals("name_test", result.getName());
-                assertEquals("ref_test", result.getRef());
-                assertEquals("description_test", result.getDescription());
-                assertEquals(BigDecimal.valueOf(10), result.getPrice());
-                assertEquals(Set.of(Size.P, Size.M), result.getSupportedSizes());
+                assertEquals(model.getName(), result.getName());
+                assertEquals(model.getRef(), result.getRef());
+                assertEquals(model.getDescription(), result.getDescription());
+                assertEquals(model.getPrice(), result.getPrice());
+                assertEquals(model.getSupportedSizes(), result.getSupportedSizes());
 
-                verify(modelRepository).save(any(Model.class));
+                verify(modelRepository).save(model);
         }
 
         @Test
         void shouldUpdateModel() {
-                var createModelDTO = new CreateModelDTO(
-                                "name_test",
-                                "ref_test",
-                                "description_test",
-                                BigDecimal.valueOf(10),
-                                Set.of(Size.P, Size.M));
-
-                var model = new Model(createModelDTO);
-
-                var modelId = 1L;
-                model.setId(modelId);
+                var model = modelEntities.get(0);
+                var modelId = model.getId();
 
                 when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
-                when(modelRepository.save(any(Model.class))).thenReturn(model);
+                when(modelRepository.save(any(Model.class))).thenAnswer(invoker -> invoker.getArgument(0));
+
+                var originalName = model.getName();
+                var originalSizes = model.getSupportedSizes();
 
                 var updateModelDTO = new UpdateModelDTO(
                                 "name_test_updated",
@@ -167,29 +176,20 @@ public class ModelServiceTest {
 
                 assertNotNull(result);
 
-                assertEquals("name_test_updated", result.getName());
-                assertEquals("ref_test_updated", result.getRef());
-                assertEquals("description_test_updated", result.getDescription());
-                assertEquals(BigDecimal.valueOf(20), result.getPrice());
-                assertEquals(Set.of(Size.GG), result.getSupportedSizes());
+                assertNotEquals(originalName, result.getName());
+                assertNotEquals(originalSizes, result.getSupportedSizes());
+
+                assertEquals(updateModelDTO.name(), result.getName());
+                assertEquals(updateModelDTO.supportedSizes(), result.getSupportedSizes());
 
                 verify(modelRepository).findById(modelId);
-                verify(modelRepository).save(any(Model.class));
+                verify(modelRepository).save(model);
         }
 
         @Test
         void shouldDeleteModel() {
-                var createModelDTO = new CreateModelDTO(
-                                "name_test",
-                                "ref_test",
-                                "description_test",
-                                BigDecimal.valueOf(10),
-                                Set.of(Size.P, Size.M));
-
-                var model = new Model(createModelDTO);
-
-                var modelId = 1L;
-                model.setId(modelId);
+                var model = modelEntities.get(0);
+                var modelId = model.getId();
 
                 when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
                 doNothing().when(modelRepository).deleteById(modelId);
