@@ -2,6 +2,8 @@ package com.luand.luand.entities;
 
 import java.io.Serializable;
 
+import com.luand.luand.entities.dto.image.CreateImageDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,9 +26,11 @@ public class Image implements Serializable {
         private Long id;
 
         @Column(unique = true)
-        private String nameKey;
+        private String nameKey, url;
 
-        @Column(unique = true)
-        private String url;
+        public Image(CreateImageDTO createImageDTO) {
+                this.nameKey = createImageDTO.nameKey();
+                this.url = createImageDTO.url();
+        }
 
 }
