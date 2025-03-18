@@ -20,7 +20,7 @@ public class TokenService {
         private final JwtEncoder jwtEncoder;
 
         private static final int HOURS_EXPIRATION_TOKEN = 20;
-        private static final ZoneId ZONE_ID = ZoneId.of("America/Recife");
+        private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
         public TokenResponseDTO getToken(String userIdentifty) {
                 var token = generateToken(userIdentifty);
@@ -28,7 +28,6 @@ public class TokenService {
         }
 
         private String generateToken(String userIdentifty) {
-
                 var claims = JwtClaimsSet.builder()
                                 .issuer("luand-backend")
                                 .subject(userIdentifty)
@@ -50,6 +49,4 @@ public class TokenService {
                 return ZonedDateTime.now(ZONE_ID).plusHours(HOURS_EXPIRATION_TOKEN)
                                 .toInstant();
         }
-
-
 }
