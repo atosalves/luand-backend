@@ -2,6 +2,7 @@ package com.luand.luand.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,14 +12,15 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
 import com.luand.luand.entities.User;
 import com.luand.luand.entities.dto.user.CreateUserDTO;
 import com.luand.luand.entities.dto.user.UpdateUserDTO;
@@ -37,17 +39,34 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
 
+    List<User> userEntities;
+
+    @BeforeEach
+    void setUp() {
+        var createUserDTO1 = new CreateUserDTO(
+                "name_test_1",
+                "email_test_1",
+                "password_test_1");
+        var createUserDTO2 = new CreateUserDTO(
+                "name_test_2",
+                "email_test_2",
+                "password_test_2");
+        var createUserDTO3 = new CreateUserDTO(
+                "name_test_3",
+                "email_test_3",
+                "password_test_3");
+
+        var user1 = new User(createUserDTO1);
+        var user2 = new User(createUserDTO2);
+        var user3 = new User(createUserDTO3);
+
+        userEntities = List.of(user1, user2, user3);
+    }
+
     @Test
     void shouldReturnUserById() {
-        var createUserDTO = new CreateUserDTO(
-                "name_test",
-                "email_test",
-                "password_test");
-
-        var user = new User(createUserDTO);
-
-        var userId = 1L;
-        user.setId(userId);
+        var user = userEntities.get(0);
+        var userId = user.getId();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -76,14 +95,8 @@ public class UserServiceTest {
 
     @Test
     void shouldReturnUserByEmail() {
-        var createUserDTO = new CreateUserDTO(
-                "name_test",
-                "email_test",
-                "password_test");
-
-        var user = new User(createUserDTO);
-
-        var email = "email_test";
+        var user = userEntities.get(0);
+        var email = user.getEmail();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
@@ -91,9 +104,9 @@ public class UserServiceTest {
 
         assertNotNull(result);
 
-        assertEquals("name_test", result.getName());
-        assertEquals("email_test", result.getEmail());
-        assertEquals("password_test", result.getPassword());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getPassword(), result.getPassword());
 
         verify(userRepository).findByEmail(email);
     }
@@ -118,32 +131,29 @@ public class UserServiceTest {
 
         var user = new User(createUserDTO);
 
-        when(passwordEncoder.encode(anyString())).thenReturn("password_test");
+        when(passwordEncoder.encode(anyString())).thenReturn(user.getPassword());
         when(userRepository.save(any(User.class))).thenAnswer(invoker -> invoker.getArgument(0));
 
         var createdUser = userService.createUser(createUserDTO);
 
         assertNotNull(createUserDTO);
-        assertEquals("name_test", createdUser.getName());
-        assertEquals("email_test", createdUser.getEmail());
-        assertEquals("password_test", createdUser.getPassword());
+        assertEquals(user.getName(), createdUser.getName());
+        assertEquals(user.getEmail(), createdUser.getEmail());
+        assertEquals(user.getPassword(), createdUser.getPassword());
 
-        verify(passwordEncoder).encode(anyString());
+        verify(passwordEncoder).encode(user.getPassword());
         verify(userRepository).save(user);
     }
 
     @Test
     void shoudUpdateUser() {
-        var createUserDTO = new CreateUserDTO(
-                "name_test",
-                "email_test",
-                "password_test");
 
-        var user = new User(createUserDTO);
-        var userId = 1L;
-        user.setId(userId);
+        var user = userEntities.get(0);
+        var userId = user.getId();
 
-        when(passwordEncoder.encode(anyString())).thenReturn("updated_password_test");
+        var originalName = user.getName();
+        var originalPassword = user.getPassword();
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(invoker -> invoker.getArgument(0));
 
@@ -152,27 +162,27 @@ public class UserServiceTest {
                 "updated_email_test",
                 "updated_password_test");
 
+        when(passwordEncoder.encode(anyString())).thenReturn(updateUserDTO.password());
+
         var updatedUser = userService.updateUser(user.getId(), updateUserDTO);
 
         assertNotNull(updateUserDTO);
-        assertEquals("updated_name_test", updatedUser.getName());
-        assertEquals("updated_email_test", updatedUser.getEmail());
-        assertEquals("updated_password_test", updatedUser.getPassword());
 
-        verify(passwordEncoder).encode(anyString());
+        assertEquals(user.getId(), updatedUser.getId());
+
+        assertNotEquals(originalName, updatedUser.getName());
+        assertNotEquals(originalPassword, updatedUser.getPassword());
+
+        assertEquals(updateUserDTO.email(), updatedUser.getEmail());
+
+        verify(passwordEncoder).encode(updateUserDTO.password());
         verify(userRepository).save(user);
     }
 
     @Test
     void shouldDeleteUser() {
-        var createUserDTO = new CreateUserDTO(
-                "name_test",
-                "email_test",
-                "password_test");
-
-        var user = new User(createUserDTO);
-        var userId = 1L;
-        user.setId(userId);
+        var user = userEntities.get(0);
+        var userId = user.getId();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         doNothing().when(userRepository).deleteById(userId);
