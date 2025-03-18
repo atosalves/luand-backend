@@ -71,7 +71,7 @@ public class ModelServiceTest {
                 var model = modelEntities.get(0);
                 var modelId = model.getId();
 
-                when(modelRepository.findById(modelId)).thenAnswer(invoker -> invoker.getArgument(0));
+                when(modelRepository.findById(modelId)).thenReturn(Optional.of(model));
 
                 var result = modelService.getModelById(modelId);
 
