@@ -75,9 +75,9 @@ public class UserServiceTest {
         assertNotNull(result);
 
         assertEquals(userId, result.getId());
-        assertEquals("name_test", result.getName());
-        assertEquals("email_test", result.getEmail());
-        assertEquals("password_test", result.getPassword());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getPassword(), result.getPassword());
 
         verify(userRepository).findById(userId);
     }
