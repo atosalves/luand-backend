@@ -54,6 +54,8 @@ public class Print implements Serializable {
     private Model model;
 
     public Print(CreatePrintDTO print, Model model) {
+        this.ref = print.ref();
+        this.colors = print.colors();
         this.name = print.name();
         this.coverImage = print.coverImage();
         this.images = print.images();
