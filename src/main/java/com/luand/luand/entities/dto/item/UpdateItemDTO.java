@@ -8,11 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record UpdateItemDTO(
-                @NotBlank(message = "{ref.not-blank}") @jakarta.validation.constraints.Size(max = 12, message = "{ref.size}") String ref,
                 @NotNull(message = "{size.not-null}") Size size,
                 @NotBlank(message = "{color.not-blank}") Color color,
                 @NotNull(message = "{available-quantity.not-null}") @Positive(message = "{available-quantity.positive}") int availableQuantity,
                 @NotNull(message = "{print-id.not-null}") Long printId) {
 
 }
-
