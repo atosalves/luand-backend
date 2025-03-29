@@ -1,8 +1,8 @@
 package com.luand.luand.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +10,8 @@ import com.luand.luand.entities.Print;
 import com.luand.luand.entities.dto.print.CreatePrintDTO;
 import com.luand.luand.entities.dto.print.UpdatePrintDTO;
 import com.luand.luand.exceptions.custom_exception.print.PrintNotFoundException;
+import com.luand.luand.repositories.ColorRepository;
+import com.luand.luand.repositories.ImageRepository;
 import com.luand.luand.repositories.PrintRepository;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +21,8 @@ import lombok.AllArgsConstructor;
 public class PrintService {
 
     private final PrintRepository printRepository;
+    private final ColorRepository colorRepository;
+    private final ImageRepository imageRepository;
     private final ModelService modelService;
 
     @Transactional(readOnly = true)
@@ -31,7 +35,20 @@ public class PrintService {
     public Print createPrint(CreatePrintDTO data) {
 
         var model = modelService.getModelById(data.modelId());
+
+        var coverImage = imageRepository.save(data.coverImage());
+
+        var images = data.images().stream().map(image -> imageRepository.save(image)).collect(Collectors.toSet());
+
+        var colors = data.colors().stream().map(color -> colorRepository.findByHexColor(color.getHexColor())
+                .or(() -> colorRepository.findByName(color.getName()))
+                .or(() -> colorRepository.findByRef((color.getRef()))).orElseGet(() -> colorRepository.save(color)))
+                .collect(Collectors.toSet());
+
         var print = new Print(data, model);
+        print.setCoverImage(coverImage);
+        print.setImages(images);
+        print.setColors(colors);
 
         return printRepository.save(print);
     }
@@ -40,10 +57,23 @@ public class PrintService {
     public Print updatePrint(Long id, UpdatePrintDTO data) {
         var print = getPrintById(id);
 
-        BeanUtils.copyProperties(data, print);
-
         var model = modelService.getModelById(data.modelId());
         print.setModel(model);
+
+        print.setName(data.name());
+        print.setRef(data.ref());
+        print.setCoverImage(data.coverImage());
+
+        print.getImages().clear();
+        print.getImages().addAll(data.images());
+
+        var colors = data.colors().stream().map(
+                color -> colorRepository.findByHexColor(color.getHexColor())
+                        .or(() -> colorRepository.findByName(color.getName()))
+                        .or(() -> colorRepository.findByRef((color.getRef())))
+                        .orElseGet(() -> colorRepository.save(color)))
+                .collect(Collectors.toSet());
+        print.setColors(colors);
 
         return printRepository.save(print);
     }

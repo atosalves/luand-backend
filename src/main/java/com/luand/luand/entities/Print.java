@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -31,6 +33,10 @@ public class Print implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private Model model;
+
     @Column(unique = true)
     private String name;
 
@@ -43,23 +49,20 @@ public class Print implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(name = "tb_print_colors", joinColumns = @JoinColumn(name = "print_id"), inverseJoinColumns = @JoinColumn(name = "color_id"))
     private Set<Color> colors;
 
     @OneToMany(mappedBy = "print")
     private Set<Item> itens;
 
-    @ManyToOne
-    @JoinColumn(name = "model_id")
-    private Model model;
-
     public Print(CreatePrintDTO print, Model model) {
-        this.ref = print.ref();
-        this.colors = print.colors();
+        this.model = model;
         this.name = print.name();
+        this.ref = print.ref();
         this.coverImage = print.coverImage();
         this.images = print.images();
-        this.model = model;
+        this.colors = print.colors();
     }
 
 }
