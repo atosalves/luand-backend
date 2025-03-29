@@ -47,6 +47,16 @@ public class Item implements Serializable {
         this.color = itemDTO.color();
         this.availableQuantity = itemDTO.availableQuantity();
         this.print = print;
+
+        this.ref = new StringBuilder()
+                .append(print.getModel().getRef())
+                .append("-")
+                .append(color.getRef())
+                .append("-")
+                .append(size.toString())
+                .append("-")
+                .append(print.getRef())
+                .toString();
     }
 
 }

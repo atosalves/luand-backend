@@ -59,6 +59,7 @@ public class ItemService {
 
     @Transactional
     public void deleteItem(Long id) {
+        getItemById(id);
         itemRepository.deleteById(id);
     }
 
