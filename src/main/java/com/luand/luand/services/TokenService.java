@@ -22,8 +22,8 @@ public class TokenService {
         private static final int HOURS_EXPIRATION_TOKEN = 20;
         private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
-        public TokenResponseDTO getToken(String userIdentifty) {
-                var token = generateToken(userIdentifty);
+        public TokenResponseDTO getToken(String userIdentity) {
+                var token = generateToken(userIdentity);
                 return new TokenResponseDTO(token);
         }
 
