@@ -2,8 +2,6 @@ package com.luand.luand.entities;
 
 import java.io.Serializable;
 
-import com.luand.luand.entities.dto.color.CreateColorDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,10 +26,10 @@ public class Color implements Serializable {
         @Column(unique = true)
         private String hexColor, name, ref;
 
-        public Color(CreateColorDTO createColorDTO) {
-                this.hexColor = createColorDTO.hexColor();
-                this.name = createColorDTO.name();
-                this.ref = createColorDTO.ref();
+        public Color(String hexColor, String name, String ref) {
+                this.hexColor = hexColor;
+                this.name = name;
+                this.ref = ref;
         }
 
 }
