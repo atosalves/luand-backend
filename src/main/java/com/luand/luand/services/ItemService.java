@@ -38,8 +38,6 @@ public class ItemService {
         var print = printService.getPrintById(data.printId());
         var item = new Item(data, print);
 
-        item.setRef(item.getPrint().getModel().getRef() + "-" + item.getSize() + "-" + item.getColor() + item.getId());
-
         return itemRepository.save(item);
     }
 
