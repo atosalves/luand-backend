@@ -10,10 +10,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,12 @@ public class ModelServiceTest {
                 var model2 = new Model(createModelDTO2);
                 var model3 = new Model(createModelDTO3);
 
-                modelEntities = List.of(model1, model2, model3);
+                modelEntities = new ArrayList<>(List.of(model1, model2, model3));
+        }
+
+        @AfterEach
+        void tearDown() {
+                modelEntities.clear();
         }
 
         @Test
@@ -89,20 +96,19 @@ public class ModelServiceTest {
 
         @Test
         void shouldThrowNotFoundModelWhenModelById() {
-                var modelId = 1L;
+                var invalidModelId = 999L;
 
-                when(modelRepository.findById(modelId)).thenReturn(Optional.empty());
+                when(modelRepository.findById(invalidModelId)).thenReturn(Optional.empty());
 
                 assertThrows(ModelNotFoundException.class, () -> {
-                        modelService.getModelById(modelId);
+                        modelService.getModelById(invalidModelId);
                 });
 
-                verify(modelRepository).findById(modelId);
+                verify(modelRepository).findById(invalidModelId);
         }
 
         @Test
         void shouldReturnAllModels() {
-
                 var model = modelEntities.get(0);
 
                 when(modelRepository.findAll()).thenReturn(modelEntities);
@@ -118,7 +124,6 @@ public class ModelServiceTest {
 
         @Test
         void shouldReturnAllModelsEmpty() {
-
                 var result = modelService.getAllModels();
 
                 assertNotNull(result);

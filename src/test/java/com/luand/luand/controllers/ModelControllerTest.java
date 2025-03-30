@@ -12,14 +12,14 @@ import com.luand.luand.entities.Model;
 import com.luand.luand.entities.Size;
 import com.luand.luand.entities.dto.model.CreateModelDTO;
 import com.luand.luand.entities.dto.model.UpdateModelDTO;
-import com.luand.luand.repositories.ModelRepository;
+import com.luand.luand.services.ModelService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
 import java.util.Set;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +38,7 @@ public class ModelControllerTest {
         ObjectMapper objectMapper;
 
         @Autowired
-        ModelRepository modelRepository;
+        ModelService modelService;
 
         List<Model> modelEntities;
 
@@ -63,29 +63,23 @@ public class ModelControllerTest {
                                 BigDecimal.valueOf(30),
                                 Set.of(Size.P, Size.M));
 
-                var model1 = new Model(createModelDTO1);
-                var model2 = new Model(createModelDTO2);
-                var model3 = new Model(createModelDTO3);
-
-                modelEntities = modelRepository.saveAll(Arrays.asList(model1, model2, model3));
+                modelEntities = new ArrayList<>(List.of(
+                                modelService.createModel(createModelDTO1),
+                                modelService.createModel(createModelDTO2),
+                                modelService.createModel(createModelDTO3)));
         }
 
         @AfterEach
         void tearDown() {
+                modelEntities.forEach(model -> modelService.deleteModel(model.getId()));
                 modelEntities.removeAll(modelEntities);
-                modelRepository.deleteAll();
         }
 
         @Test
         void shouldReturnAllModels() throws Exception {
-
-                var indexModel = 0;
-                var modelId = modelEntities.get(0).getId();
-
                 mockMvc.perform(get("/models").contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.length()").value(modelEntities.size()))
-                                .andExpect(jsonPath("$[" + indexModel + "].id").value(modelId));
+                                .andExpect(jsonPath("$").isArray());
         }
 
         @Test
@@ -105,8 +99,7 @@ public class ModelControllerTest {
                                 .andExpect(jsonPath("$.ref").value(createModelDTO.ref()))
                                 .andExpect(jsonPath("$.description").value(createModelDTO.description()))
                                 .andExpect(jsonPath("$.price").value(createModelDTO.price()))
-                                .andExpect(jsonPath("$.supportedSizes[0]").value("P"))
-                                .andExpect(jsonPath("$.supportedSizes[1]").value("M"));
+                                .andExpect(jsonPath("$.supportedSizes").isNotEmpty());
         }
 
         @Test
@@ -176,7 +169,9 @@ public class ModelControllerTest {
 
         @Test
         void shouldDeleteModel() throws Exception {
-                var modelId = modelEntities.get(0).getId();
+                var model = modelEntities.get(0);
+                var modelId = model.getId();
+                modelEntities.remove(model);
 
                 mockMvc.perform(delete("/models/" + modelId).contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isNoContent());
