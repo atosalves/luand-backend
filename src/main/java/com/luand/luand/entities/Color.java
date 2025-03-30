@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ public class Color implements Serializable {
         private Long id;
 
         @Column(unique = true)
+        @NotBlank
         private String hexColor, name, ref;
 
         public Color(String hexColor, String name, String ref) {
