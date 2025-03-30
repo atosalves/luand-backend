@@ -28,6 +28,8 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas"),
     })
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody @Valid LoginDTO data) {
@@ -41,6 +43,6 @@ public class AuthController {
                 .maxAge(Duration.ofDays(7))
                 .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).build();
+        return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).build();
     }
 }
