@@ -8,6 +8,7 @@ import com.luand.luand.entities.dto.print.CreatePrintDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -53,8 +54,8 @@ public class Print implements Serializable {
     @JoinTable(name = "tb_print_colors", joinColumns = @JoinColumn(name = "print_id"), inverseJoinColumns = @JoinColumn(name = "color_id"))
     private Set<Color> colors;
 
-    @OneToMany(mappedBy = "print")
-    private Set<Item> itens;
+    @OneToMany(mappedBy = "print", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Item> items;
 
     public Print(CreatePrintDTO print, Model model) {
         this.model = model;

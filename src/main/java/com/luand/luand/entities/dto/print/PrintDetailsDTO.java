@@ -25,7 +25,7 @@ public record PrintDetailsDTO(
                 print.getCoverImage(),
                 print.getImages(),
                 print.getColors(),
-                print.getItens(),
+                print.getItems(),
                 new ModelDetailsDTO(print.getModel()));
     }
 }
