@@ -1,5 +1,6 @@
 package com.luand.luand.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,8 +48,8 @@ public class PrintService {
 
         var print = new Print(data, model);
         print.setCoverImage(coverImage);
-        print.setImages(images);
-        print.setColors(colors);
+        print.setImages(new HashSet<>(images));
+        print.setColors(new HashSet<>(colors));
 
         return printRepository.save(print);
     }
@@ -67,13 +68,12 @@ public class PrintService {
         print.getImages().clear();
         print.getImages().addAll(data.images());
 
-        var colors = data.colors().stream().map(
+        print.getColors().stream().map(
                 color -> colorRepository.findByHexColor(color.getHexColor())
                         .or(() -> colorRepository.findByName(color.getName()))
                         .or(() -> colorRepository.findByRef((color.getRef())))
                         .orElseGet(() -> colorRepository.save(color)))
                 .collect(Collectors.toSet());
-        print.setColors(colors);
 
         return printRepository.save(print);
     }
